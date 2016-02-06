@@ -74,8 +74,6 @@ public class AffixSplitter extends Thread {
 		suffix_splitter="([Ꭰ-Ᏼ]{2,})("+tmp.toString()+")\\b";
 		suffix_matches=tmp_matches.toArray(new String[0]);
 		suffix_replacements=tmp_replacements.toArray(new String[0]);
-		System.out.println(suffix_splitter);
-		System.exit(0);;
 	}
 	
 	private final String[] args;
