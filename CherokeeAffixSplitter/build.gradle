@@ -1,0 +1,115 @@
+buildscript {
+    repositories {
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.6'
+    }
+}
+plugins {
+  id "us.kirchmeier.capsule" version "1.0-rc1"
+}
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
+
+version = '20160205'
+
+sourceCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+
+def RTJAR = '/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar';
+if (new File(RTJAR).exists()) {
+	compileJava.options.bootClasspath=RTJAR
+}
+
+repositories {
+    jcenter()
+	maven {
+		url "https://github.com/psiegman/mvn-repo/raw/master/releases"
+	}
+}
+
+configurations {
+	provided
+}
+
+dependencies {
+	compile project(':CherokeeDictionaryShared')
+	compile project(':CherokeeDictionaryDao')
+	compile project(':SimpleTextUi')
+	
+	compile 'commons-io:commons-io:+'
+	compile 'org.apache.commons:commons-lang3:+'
+}
+
+eclipseJdt << {
+    File f = file('.settings/org.eclipse.core.resources.prefs')
+    f.write('eclipse.preferences.version=1\n')
+    f.append('encoding/<project>=utf-8')
+    f = file('.settings/org.eclipse.core.runtime.prefs')
+    f.write('eclipse.preferences.version=1\n')
+    f.append('line.separator=\\n\n')
+}
+
+task fatjar(type: FatCapsule) {
+  	archiveName 'CherokeeAffixSplitter.jar'
+	applicationClass 'com.cherokeelessons.affixsplitter.Main'
+	capsuleManifest {
+    	jvmArgs = ['-Dfile.encoding=UTF-8']
+	}
+}
+
+project.afterEvaluate {
+	// use jre lib matching version used by project, not the workspace default
+	if (sourceCompatibility != null) {
+		def target = project.sourceCompatibility.toString()
+		def containerPrefix = "org.eclipse.jdt.launching.JRE_CONTAINER"
+		def containerSuffix
+		if (target =~ /1.[4-5]/) {
+			containerSuffix = '/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-' + target
+		} else if (target =~ /1.[6-8]/) {
+			containerSuffix = '/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-' + target
+		}
+		if (containerSuffix != null) {
+			project.eclipse.classpath {
+				containers.removeAll { it.startsWith(containerPrefix) }
+				containers.add(containerPrefix + containerSuffix)
+			}
+		}
+	}
+}
+
+eclipse {
+	project {
+		name = 'CherokeeAffixSplitter'
+		referencedProjects 'CherokeeDictionaryShared', 'CherokeeDictionaryDao', 'SimpleTextUi'
+		natures 'org.springsource.ide.eclipse.gradle.core.nature'
+	}
+	
+	classpath {
+		plusConfigurations += [configurations.provided]
+		containers += ['org.springsource.ide.eclipse.gradle.classpathcontainer']
+		downloadSources = true
+		downloadJavadoc = true
+	}
+
+	jdt {
+		sourceCompatibility=1.8
+		targetCompatibility=1.8
+	}
+
+	wtp {
+		facet {
+			facets = []
+			facet name: 'jst.java', version: '1.8'
+			//facet name: 'jst.web', version: '3.0'
+		}
+	}
+
+}
+
+task "create-dirs" << {
+	sourceSets*.java.srcDirs*.each { it.mkdirs() }
+	sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+}
