@@ -3,7 +3,7 @@ Utility to guess some affix splits on Cherokee texts. Developed to use with the 
 
 Install Gradle 2.10 or better.
 
-Close the Simple UI project next to this project.
+Clone the Simple UI project next to this project.
 
 cd CherokeeAffixSplitter/CherokeeAffixSplitter
 gradle clean build fatjar
