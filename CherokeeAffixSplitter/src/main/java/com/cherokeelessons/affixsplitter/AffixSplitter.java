@@ -313,7 +313,14 @@ public class AffixSplitter extends Thread {
 		p.regex_match = "[ᎦᎨᎪᎫᎬ]";
 		p.match = new String[] {"Ꭶ==", "Ꭸ==", "Ꭺ==", "Ꭻ==", "Ꭼ=="};
 		p.replacement  = new String[] {"Ꭶ= ", "Ꭶ= Ꭱ", "Ꭶ= Ꭳ", "Ꭶ= Ꭴ", "Ꭶ= Ꭵ"};
-		matches.add(p);
+//		matches.add(p); // too many false positives for the bare version
+		addCommonPrepronounPermutations(matches, p);
+		
+		p = new PatternMatchReplacement();
+		p.regex_match = "[Ꭰ]";
+		p.match = new String[] {"Ꭰ=="};
+		p.replacement  = new String[] {"= Ꭰ"};
+//		matches.add(p); // too many false positives for the bare version
 		addCommonPrepronounPermutations(matches, p);
 		
 		p = new PatternMatchReplacement();

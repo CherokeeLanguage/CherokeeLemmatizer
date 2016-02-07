@@ -6,16 +6,16 @@ public class PatternMatchReplacement implements Comparable<PatternMatchReplaceme
 	public String[] replacement;
 	@Override
 	public int compareTo(PatternMatchReplacement o) {
-		return -compareId().compareTo(o.compareId());
+		return -getSortId().compareTo(o.getSortId());
 	}
 	private String _id=null;
-	public String compareId(){
+	public String getSortId(){
 		if (_id!=null) {
 			return _id;
 		}
 		int len=0;
 		for (String r: replacement) {
-			len=Math.max(len, r.length());
+			len=Math.min(len, r.length());
 		}
 		StringBuilder id = new StringBuilder();
 		if (len<1000){
