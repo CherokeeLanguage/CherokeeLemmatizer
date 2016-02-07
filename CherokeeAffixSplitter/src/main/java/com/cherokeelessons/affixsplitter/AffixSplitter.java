@@ -375,6 +375,7 @@ public class AffixSplitter extends Thread {
 		matches.add(prefixWithNi(p));
 		matches.add(prefixWithNi(prefixWithDe(p)));
 		matches.add(prefixWithYi(p));
+		matches.add(prefixWithYi(prefixWithDe(p)));
 		matches.add(prefixWithYi(prefixWithNi(p)));
 		matches.add(prefixWithYi(prefixWithNi(prefixWithDe(p))));
 	}
@@ -392,7 +393,8 @@ public class AffixSplitter extends Thread {
 		}
 		
 		for (int i=0; i<q.match.length; i++) {
-			q.replacement[i]="Ꮥ= "+q.replacement[i];
+//			q.replacement[i]="Ꮥ= "+q.replacement[i];
+			q.replacement[i]="Ꮥ="+q.replacement[i];
 		}
 		
 		return q;
@@ -411,7 +413,8 @@ public class AffixSplitter extends Thread {
 		}
 		
 		for (int i=0; i<q.match.length; i++) {
-			q.replacement[i]="Ꮒ= "+q.replacement[i];
+//			q.replacement[i]="Ꮒ= "+q.replacement[i];
+			q.replacement[i]="Ꮒ="+q.replacement[i];
 		}
 		
 		return q;
@@ -430,7 +433,8 @@ public class AffixSplitter extends Thread {
 		}
 		
 		for (int i=0; i<q.match.length; i++) {
-			q.replacement[i]="Ᏹ= "+q.replacement[i];
+//			q.replacement[i]="Ᏹ= "+q.replacement[i];
+			q.replacement[i]="Ᏹ="+q.replacement[i];
 		}
 		
 		return q;
