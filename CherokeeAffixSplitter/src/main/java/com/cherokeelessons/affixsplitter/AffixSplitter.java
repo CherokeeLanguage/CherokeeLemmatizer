@@ -319,13 +319,31 @@ public class AffixSplitter extends Thread {
 		p = new PatternMatchReplacement();
 		p.regex_match = "Ꭰ";
 		p.match = new String[] {"Ꭰ=="};
-		p.replacement  = new String[] {"= Ꭰ"};
+		p.replacement  = new String[] {" Ꭰ"};
 		addCommonPrepronounPermutations(matches, p);
 		
 		p = new PatternMatchReplacement();
 		p.regex_match = "Ꭱ";
 		p.match = new String[] {"Ꭱ=="};
-		p.replacement  = new String[] {"= Ꭱ"};
+		p.replacement  = new String[] {" Ꭱ"};
+		addCommonPrepronounPermutations(matches, p);
+		
+//		p = new PatternMatchReplacement();
+//		p.regex_match = "Ꭲ";
+//		p.match = new String[] {"Ꭲ=="};
+//		p.replacement  = new String[] {" "};
+//		addCommonPrepronounPermutations(matches, p);
+		
+		p = new PatternMatchReplacement();
+		p.regex_match = "Ꭳ";
+		p.match = new String[] {"Ꭳ=="};
+		p.replacement  = new String[] {" Ꭳ"};
+		addCommonPrepronounPermutations(matches, p);
+		
+		p = new PatternMatchReplacement();
+		p.regex_match = "Ꭵ";
+		p.match = new String[] {"Ꭵ=="};
+		p.replacement  = new String[] {" Ꭵ"};
 		addCommonPrepronounPermutations(matches, p);
 		
 		p = new PatternMatchReplacement();
