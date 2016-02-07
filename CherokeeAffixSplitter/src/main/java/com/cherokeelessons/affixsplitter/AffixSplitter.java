@@ -55,7 +55,7 @@ public class AffixSplitter extends Thread {
 			tmp_matches.addAll(Arrays.asList(p.match));
 			tmp_replacements.addAll(Arrays.asList(p.replacement));
 		}
-		pronoun_splitter= "\\b("+tmp.toString()+")([Ꭰ-Ᏼ]{2,})";
+		pronoun_splitter= "\\b("+tmp.toString()+")([Ꭰ-Ᏼ]{3,})";
 		pronoun_matches = tmp_matches.toArray(new String[0]);
 		pronoun_replacements = tmp_replacements.toArray(new String[0]);
 		
@@ -71,7 +71,7 @@ public class AffixSplitter extends Thread {
 			tmp_matches.addAll(Arrays.asList(p.match));
 			tmp_replacements.addAll(Arrays.asList(p.replacement));
 		}
-		suffix_splitter="([Ꭰ-Ᏼ]{2,})("+tmp.toString()+")\\b";
+		suffix_splitter="([Ꭰ-Ᏼ]{3,})("+tmp.toString()+")\\b";
 		suffix_matches=tmp_matches.toArray(new String[0]);
 		suffix_replacements=tmp_replacements.toArray(new String[0]);
 	}
@@ -317,10 +317,15 @@ public class AffixSplitter extends Thread {
 		addCommonPrepronounPermutations(matches, p);
 		
 		p = new PatternMatchReplacement();
-		p.regex_match = "[Ꭰ]";
+		p.regex_match = "Ꭰ";
 		p.match = new String[] {"Ꭰ=="};
 		p.replacement  = new String[] {"= Ꭰ"};
-//		matches.add(p); // too many false positives for the bare version
+		addCommonPrepronounPermutations(matches, p);
+		
+		p = new PatternMatchReplacement();
+		p.regex_match = "Ꭱ";
+		p.match = new String[] {"Ꭱ=="};
+		p.replacement  = new String[] {"= Ꭱ"};
 		addCommonPrepronounPermutations(matches, p);
 		
 		p = new PatternMatchReplacement();
