@@ -308,38 +308,55 @@ public class AffixSplitter extends Thread {
 		p.replacement  = new String[] {"ᎣᎩ= Ꭰ", "ᎣᎩ= Ꭱ", "ᎣᎩ= ", "ᎣᎩ= Ꭳ", "ᎣᎩ= Ꭴ", "ᎣᎩ= Ꭵ"};
 		matches.add(p);
 		addCommonPrepronounPermutations(matches, p);
-		
+
+		/*
+		 * only adding permutations, the bare matcher has too many false positives
+		 */
 		p = new PatternMatchReplacement();
 		p.regex_match = "[ᎦᎨᎪᎫᎬ]";
 		p.match = new String[] {"Ꭶ==", "Ꭸ==", "Ꭺ==", "Ꭻ==", "Ꭼ=="};
 		p.replacement  = new String[] {"Ꭶ= ", "Ꭶ= Ꭱ", "Ꭶ= Ꭳ", "Ꭶ= Ꭴ", "Ꭶ= Ꭵ"};
-//		matches.add(p); // too many false positives for the bare version
 		addCommonPrepronounPermutations(matches, p);
 		
+		/*
+		 * only adding permutations, the bare matcher has too many false positives
+		 */
 		p = new PatternMatchReplacement();
 		p.regex_match = "Ꭰ";
 		p.match = new String[] {"Ꭰ=="};
 		p.replacement  = new String[] {" Ꭰ"};
 		addCommonPrepronounPermutations(matches, p);
 		
+		/*
+		 * only adding permutations, the bare matcher has too many false positives
+		 */
 		p = new PatternMatchReplacement();
 		p.regex_match = "Ꭱ";
 		p.match = new String[] {"Ꭱ=="};
 		p.replacement  = new String[] {" Ꭱ"};
 		addCommonPrepronounPermutations(matches, p);
 		
+		/*
+		 * only adding permutations, the bare matcher has too many false positives
+		 */
 //		p = new PatternMatchReplacement();
 //		p.regex_match = "Ꭲ";
 //		p.match = new String[] {"Ꭲ=="};
 //		p.replacement  = new String[] {" "};
 //		addCommonPrepronounPermutations(matches, p);
 		
+		/*
+		 * only adding permutations, the bare matcher has too many false positives
+		 */
 		p = new PatternMatchReplacement();
 		p.regex_match = "Ꭳ";
 		p.match = new String[] {"Ꭳ=="};
 		p.replacement  = new String[] {" Ꭳ"};
 		addCommonPrepronounPermutations(matches, p);
 		
+		/*
+		 * only adding permutations, the bare matcher has too many false positives
+		 */
 		p = new PatternMatchReplacement();
 		p.regex_match = "Ꭵ";
 		p.match = new String[] {"Ꭵ=="};
