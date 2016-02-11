@@ -107,6 +107,10 @@ public class AffixSplitter extends Thread {
 				doSimpleSuffixes=true;
 				doAllAffixes=false;
 			}
+			if ("--without-affixes".equals(arg)){
+				doWithoutExtraction=true;
+				doAllAffixes=false;
+			}
 		}
 	}
 
