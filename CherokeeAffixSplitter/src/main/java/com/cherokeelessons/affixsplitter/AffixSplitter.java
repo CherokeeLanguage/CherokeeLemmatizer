@@ -606,12 +606,12 @@ public class AffixSplitter extends Thread {
 	private String doWithoutExtractions(String line) {
 		line=line.replaceAll(regex_without, regex_without_replace);
 		if (line.contains("==")){
-			line=line.replace("Ꮎ==", "Ꮒ== Ꭰ");
-			line=line.replace("Ꮑ==", "Ꮒ== Ꭱ");
-			line=line.replace("Ꮒ==", "Ꮒ== ");
-			line=line.replace("Ꮓ==", "Ꮒ== Ꭳ");
-			line=line.replace("Ꮔ==", "Ꮒ== Ꭴ");
-			line=line.replace("Ꮕ==", "Ꮒ== Ꭵ");
+			line=line.replace("Ꮎ==", "Ꮒ= Ꭰ");
+			line=line.replace("Ꮑ==", "Ꮒ= Ꭱ");
+			line=line.replace("Ꮒ==", "Ꮒ= ");
+			line=line.replace("Ꮓ==", "Ꮒ= Ꭳ");
+			line=line.replace("Ꮔ==", "Ꮒ= Ꭴ");
+			line=line.replace("Ꮕ==", "Ꮒ= Ꭵ");
 		}
 		return line;
 	}
