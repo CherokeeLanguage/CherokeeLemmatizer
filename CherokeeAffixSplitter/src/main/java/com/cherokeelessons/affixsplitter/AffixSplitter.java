@@ -608,11 +608,17 @@ public class AffixSplitter extends Thread {
 		output.delete();
 	}
 
-	private String regex_without = "\\b([ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)\\b";
+	private String regex_without = "\\b(Ᏹ?[ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)\\b";
 	private String regex_without_replace = "$1==$2$3Ꭲ =Ꭵ$4";
 	private String doWithoutExtractions(String line) {
 		line=line.replaceAll(regex_without, regex_without_replace);
 		if (line.contains("==")){
+			line=line.replace("ᏱᎾ==", "Ᏹ= Ꮒ= Ꭰ");
+			line=line.replace("ᏱᏁ==", "Ᏹ= Ꮒ= Ꭱ");
+			line=line.replace("ᏱᏂ==", "Ᏹ= Ꮒ= ");
+			line=line.replace("ᏱᏃ==", "Ᏹ= Ꮒ= Ꭳ");
+			line=line.replace("ᏱᏄ==", "Ᏹ= Ꮒ= Ꭴ");
+			line=line.replace("ᏱᏅ==", "Ᏹ= Ꮒ= Ꭵ");
 			line=line.replace("Ꮎ==", "Ꮒ= Ꭰ");
 			line=line.replace("Ꮑ==", "Ꮒ= Ꭱ");
 			line=line.replace("Ꮒ==", "Ꮒ= ");
