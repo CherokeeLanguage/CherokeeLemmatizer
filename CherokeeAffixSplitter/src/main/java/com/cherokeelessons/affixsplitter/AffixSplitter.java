@@ -567,6 +567,9 @@ public class AffixSplitter extends Thread {
 			return;
 		}
 		for (String arg: args) {
+			if (arg.startsWith("--")) {
+				continue;
+			}
 			if (!new File(arg).exists() || !new File(arg).canWrite()) {
 				throw new RuntimeException("Unable to process file '"+arg+"'");
 			}
@@ -605,7 +608,7 @@ public class AffixSplitter extends Thread {
 		output.delete();
 	}
 
-	private String regex_without = "([ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)";
+	private String regex_without = "\\b([ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)\\b";
 	private String regex_without_replace = "$1==$2$3Ꭲ =Ꭵ$4";
 	private String doWithoutExtractions(String line) {
 		line=line.replaceAll(regex_without, regex_without_replace);
