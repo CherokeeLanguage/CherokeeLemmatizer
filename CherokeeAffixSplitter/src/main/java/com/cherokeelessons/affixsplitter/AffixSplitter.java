@@ -55,7 +55,7 @@ public class AffixSplitter extends Thread {
 			tmp_matches.addAll(Arrays.asList(p.match));
 			tmp_replacements.addAll(Arrays.asList(p.replacement));
 		}
-		pronoun_splitter= "\\b("+tmp.toString()+")([Ꭰ-Ᏼ]{3,})";
+		pronoun_splitter= "\\b("+tmp.toString()+")([Ꭰ-Ᏼ]{4,})";
 		pronoun_matches = tmp_matches.toArray(new String[0]);
 		pronoun_replacements = tmp_replacements.toArray(new String[0]);
 		
@@ -71,15 +71,43 @@ public class AffixSplitter extends Thread {
 			tmp_matches.addAll(Arrays.asList(p.match));
 			tmp_replacements.addAll(Arrays.asList(p.replacement));
 		}
-		suffix_splitter="([Ꭰ-Ᏼ]{3,})("+tmp.toString()+")\\b";
+		suffix_splitter="([Ꭰ-Ᏼ]{4,})("+tmp.toString()+")\\b";
 		suffix_matches=tmp_matches.toArray(new String[0]);
 		suffix_replacements=tmp_replacements.toArray(new String[0]);
 	}
 	
 	private final String[] args;
+	private boolean doWithoutExtraction=false;
+	public boolean isDoWithoutExtraction() {
+		return doWithoutExtraction||doAllAffixes;
+	}
+	private boolean doBenefactive=false;
+	private boolean doAllAffixes=true;
+	public boolean isDoBenefactive() {
+		return doBenefactive||doAllAffixes;
+	}
+
+	public boolean isDoSimpleSuffixes() {
+		return doSimpleSuffixes||doAllAffixes;
+	}
+
+	public boolean isDoAllAffixes(){
+		return doAllAffixes;
+	}
+	private boolean doSimpleSuffixes=false;
 
 	public AffixSplitter(String[] args) {
 		this.args=args;
+		for (String arg: args) {
+			if ("--benefactive".equals(arg)) {
+				doBenefactive=true;
+				doAllAffixes=false;
+			}
+			if ("--simple-suffixes".equals(arg)) {
+				doSimpleSuffixes=true;
+				doAllAffixes=false;
+			}
+		}
 	}
 
 	private static List<PatternMatchReplacement> getSuffixMatches() {
@@ -549,10 +577,21 @@ public class AffixSplitter extends Thread {
 		LineIterator lines = FileUtils.lineIterator(absoluteFile, "UTF-8");
 		while (lines.hasNext()) {
 			String line = lines.next();
-			line = simpleSuffixSplits(line);
-			line = simplePronounSplits(line);
-			line = suffixSplits(line);
-			line = benefactiveSplit(line);
+			if (isDoSimpleSuffixes()) {
+				line = simpleSuffixSplits(line);
+			}
+			if (isDoWithoutExtraction()) {
+				line = doWithoutExtractions(line);
+			}
+			if (isDoAllAffixes()) {
+				line = suffixSplits(line);
+			}
+			if (isDoBenefactive()) {
+				line = benefactiveSplit(line);
+			}
+			if (isDoAllAffixes()) {
+				line = simplePronounSplits(line);
+			}
 			writer.write(line);
 			writer.write("\n");
 		}
@@ -561,7 +600,22 @@ public class AffixSplitter extends Thread {
 		FileUtils.copyFile(output, absoluteFile);
 		output.delete();
 	}
-	
+
+	private String regex_without = "([Ꮎ-Ꮕ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)";
+	private String regex_without_replace = "$1==$2$3Ꭲ =Ꭵ$4";
+	private String doWithoutExtractions(String line) {
+		line=line.replaceAll(regex_without, regex_without_replace);
+		if (line.contains("==")){
+			line=line.replace("Ꮎ==", "Ꮒ== Ꭰ");
+			line=line.replace("Ꮑ==", "Ꮒ== Ꭱ");
+			line=line.replace("Ꮒ==", "Ꮒ== ");
+			line=line.replace("Ꮓ==", "Ꮒ== Ꭳ");
+			line=line.replace("Ꮔ==", "Ꮒ== Ꭴ");
+			line=line.replace("Ꮕ==", "Ꮒ== Ꭵ");
+		}
+		return null;
+	}
+
 	private String simplePronounSplits(String line) {
 		line = line.replaceAll(pronoun_splitter, "$1==$2");
 		if (line.contains("==")){
@@ -579,11 +633,12 @@ public class AffixSplitter extends Thread {
 	}
 
 	private String simpleSuffixSplits(String line) {
-		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏍᎩᏂ\\b", "$1 =ᏍᎩᏂ");
-		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏉᏃ\\b", "$1 =Ꮙ =Ꮓ");
-		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏰᏃ\\b", "$1 =ᏰᏃ");
-		line = line.replaceAll("^([Ꭰ-Ᏼ]{2,})Ꮓ\\b", "$1 =Ꮓ");
-		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꮙ\\b", "$1 =Ꮙ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{3,})ᏍᎩᏂ\\b", "$1 =ᏍᎩᏂ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{3,})ᏉᏃ\\b", "$1 =Ꮙ =Ꮓ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{3,})ᏰᏃ\\b", "$1 =ᏰᏃ");
+		line = line.replaceAll("^([Ꭰ-Ᏼ]{3,})Ꮓ\\b", "$1 =Ꮓ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{3,})Ꮙ\\b", "$1 =Ꮙ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{3,})Ᏹ\\b", "$1 =Ᏹ");
 		return line;
 	}
 
