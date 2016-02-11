@@ -613,7 +613,7 @@ public class AffixSplitter extends Thread {
 			line=line.replace("Ꮔ==", "Ꮒ== Ꭴ");
 			line=line.replace("Ꮕ==", "Ꮒ== Ꭵ");
 		}
-		return null;
+		return line;
 	}
 
 	private String simplePronounSplits(String line) {
