@@ -601,7 +601,7 @@ public class AffixSplitter extends Thread {
 		output.delete();
 	}
 
-	private String regex_without = "([Ꮎ-Ꮕ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)";
+	private String regex_without = "([ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)";
 	private String regex_without_replace = "$1==$2$3Ꭲ =Ꭵ$4";
 	private String doWithoutExtractions(String line) {
 		line=line.replaceAll(regex_without, regex_without_replace);
