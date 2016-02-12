@@ -55,7 +55,7 @@ public class AffixSplitter extends Thread {
 			tmp_matches.addAll(Arrays.asList(p.match));
 			tmp_replacements.addAll(Arrays.asList(p.replacement));
 		}
-		pronoun_splitter= "\\b("+tmp.toString()+")([Ꭰ-Ᏼ]{4,})";
+		pronoun_splitter= "\\b("+tmp.toString()+")([Ꭰ-Ᏼ]{3,})";
 		pronoun_matches = tmp_matches.toArray(new String[0]);
 		pronoun_replacements = tmp_replacements.toArray(new String[0]);
 		
@@ -71,9 +71,45 @@ public class AffixSplitter extends Thread {
 			tmp_matches.addAll(Arrays.asList(p.match));
 			tmp_replacements.addAll(Arrays.asList(p.replacement));
 		}
-		suffix_splitter="([Ꭰ-Ᏼ]{4,})("+tmp.toString()+")\\b";
+		suffix_splitter="([Ꭰ-Ᏼ]{3,})("+tmp.toString()+")\\b";
 		suffix_matches=tmp_matches.toArray(new String[0]);
 		suffix_replacements=tmp_replacements.toArray(new String[0]);
+	}
+	
+	private void process(String arg) throws IOException {
+		File absoluteFile = new File(arg).getAbsoluteFile();
+		File output = File.createTempFile(absoluteFile.getName(), ".tmp", absoluteFile.getParentFile());
+		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(output), "UTF-8");
+		LineIterator lines = FileUtils.lineIterator(absoluteFile, "UTF-8");
+		while (lines.hasNext()) {
+			String line = lines.next();
+			if (isDoSimpleSuffixes()) {
+				line = simpleSuffixSplits(line);
+			}
+			if (isDoWithoutExtraction()) {
+				line = doWithoutExtractions(line);
+			}
+			line = doAlreadyHaveExtractions(line);
+			line = doAmbulativeExtractions(line);
+			line = doApproachingExtractions(line);
+			line = doCompletelyExtractions(line);
+			line = doWillAlreadyExtractions(line);
+			if (isDoAllAffixes()) {
+				line = suffixSplits(line);
+			}
+			if (isDoBenefactive()) {
+				line = benefactiveSplit(line);
+			}
+			if (isDoAllAffixes()) {
+				line = simplePronounSplits(line);
+			}
+			writer.write(line);
+			writer.write("\n");
+		}
+		writer.close();
+		lines.close();
+		FileUtils.copyFile(output, absoluteFile);
+		output.delete();
 	}
 	
 	private final String[] args;
@@ -575,42 +611,6 @@ public class AffixSplitter extends Thread {
 			}
 			process(arg);
 		}
-	}
-
-	private void process(String arg) throws IOException {
-		File absoluteFile = new File(arg).getAbsoluteFile();
-		File output = File.createTempFile(absoluteFile.getName(), ".tmp", absoluteFile.getParentFile());
-		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(output), "UTF-8");
-		LineIterator lines = FileUtils.lineIterator(absoluteFile, "UTF-8");
-		while (lines.hasNext()) {
-			String line = lines.next();
-			if (isDoSimpleSuffixes()) {
-				line = simpleSuffixSplits(line);
-			}
-			if (isDoWithoutExtraction()) {
-				line = doWithoutExtractions(line);
-			}
-			line = doAlreadyHaveExtractions(line);
-			line = doAmbulativeExtractions(line);
-			line = doApproachingExtractions(line);
-			line = doCompletelyExtractions(line);
-			line = doWillAlreadyExtractions(line);
-			if (isDoAllAffixes()) {
-				line = suffixSplits(line);
-			}
-			if (isDoBenefactive()) {
-				line = benefactiveSplit(line);
-			}
-			if (isDoAllAffixes()) {
-				line = simplePronounSplits(line);
-			}
-			writer.write(line);
-			writer.write("\n");
-		}
-		writer.close();
-		lines.close();
-		FileUtils.copyFile(output, absoluteFile);
-		output.delete();
 	}
 
 	private String regex_without = "\\b(Ᏹ?[ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)\\b";
