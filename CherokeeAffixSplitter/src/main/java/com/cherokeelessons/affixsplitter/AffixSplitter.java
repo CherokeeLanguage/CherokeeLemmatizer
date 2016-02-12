@@ -788,11 +788,11 @@ public class AffixSplitter extends Thread {
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏍᎩᏂ\\b", "$1 =ᏍᎩᏂ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏉᏃ\\b", "$1 =Ꮙ =Ꮓ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏰᏃ\\b", "$1 =ᏰᏃ");
-		line = line.replaceAll("^([Ꭰ-Ᏼ]{2,})Ꮓ\\b", "$1 =Ꮓ");
-		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꮙ\\b", "$1 =Ꮙ");
-		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ᏹ\\b", "$1 =Ᏹ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏗᏜ\\b", "$1 =ᏗᏜ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏗᏢ\\b", "$1 =ᏗᏢ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꮓ\\b", "$1 =Ꮓ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꮙ\\b", "$1 =Ꮙ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ᏹ\\b", "$1 =Ᏹ");
 		return line;
 	}
 
