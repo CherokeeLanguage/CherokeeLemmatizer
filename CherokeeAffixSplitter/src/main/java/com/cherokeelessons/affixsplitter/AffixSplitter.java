@@ -83,24 +83,16 @@ public class AffixSplitter extends Thread {
 		LineIterator lines = FileUtils.lineIterator(absoluteFile, "UTF-8");
 		while (lines.hasNext()) {
 			String line = lines.next();
-			if (isDoSimpleSuffixes()) {
-				line = simpleAffixSplits(line);
-			}
-			if (isDoWithoutExtraction()) {
-				line = doWithoutExtractions(line);
-			}
+			line = simpleAffixSplits(line);
+			line = doWithoutExtractions(line);
 			line = doAlreadyHaveExtractions(line);
 			line = doAmbulativeExtractions(line);
 			line = doApproachingExtractions(line);
 			line = doCompletelyExtractions(line);
 			line = doWillAlreadyExtractions(line);
-			if (isDoAllAffixes()) {
-				line = suffixSplits(line);
-			}
-			if (isDoBenefactive()) {
-				line = benefactiveSplit(line);
-			}
-			if (isDoAllAffixes()) {
+			line = suffixSplits(line);
+			line = benefactiveSplit(line);
+			if (doPronouns) {
 				line = simplePronounSplits(line);
 			}
 			writer.write(line);
@@ -113,39 +105,13 @@ public class AffixSplitter extends Thread {
 	}
 	
 	private final String[] args;
-	private boolean doWithoutExtraction=false;
-	public boolean isDoWithoutExtraction() {
-		return doWithoutExtraction||doAllAffixes;
-	}
-	private boolean doBenefactive=false;
-	private boolean doAllAffixes=true;
-	public boolean isDoBenefactive() {
-		return doBenefactive||doAllAffixes;
-	}
-
-	public boolean isDoSimpleSuffixes() {
-		return doSimpleSuffixes||doAllAffixes;
-	}
-
-	public boolean isDoAllAffixes(){
-		return doAllAffixes;
-	}
-	private boolean doSimpleSuffixes=false;
+	private boolean doPronouns=false;
 
 	public AffixSplitter(String[] args) {
 		this.args=args;
 		for (String arg: args) {
-			if ("--benefactive".equals(arg)) {
-				doBenefactive=true;
-				doAllAffixes=false;
-			}
-			if ("--simple-suffixes".equals(arg)) {
-				doSimpleSuffixes=true;
-				doAllAffixes=false;
-			}
-			if ("--without-affixes".equals(arg)){
-				doWithoutExtraction=true;
-				doAllAffixes=false;
+			if ("--doPronouns".equals(arg)) {
+				doPronouns=true;
 			}
 		}
 	}
