@@ -784,7 +784,7 @@ public class AffixSplitter extends Thread {
 	}
 
 	private String simpleSuffixSplits(String line) {
-		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꭲ\\b", "$1 =Ꭲ");
+//		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꭲ\\b", "$1 =Ꭲ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏍᎩᏂ\\b", "$1 =ᏍᎩᏂ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏉᏃ\\b", "$1 =Ꮙ =Ꮓ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏰᏃ\\b", "$1 =ᏰᏃ");
