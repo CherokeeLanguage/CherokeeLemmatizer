@@ -84,7 +84,7 @@ public class AffixSplitter extends Thread {
 		while (lines.hasNext()) {
 			String line = lines.next();
 			if (isDoSimpleSuffixes()) {
-				line = simpleSuffixSplits(line);
+				line = simpleAffixSplits(line);
 			}
 			if (isDoWithoutExtraction()) {
 				line = doWithoutExtractions(line);
@@ -783,14 +783,16 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 
-	private String simpleSuffixSplits(String line) {
-//		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꭲ\\b", "$1 =Ꭲ");
+	private String simpleAffixSplits(String line) {
+		line = line.replaceAll("\\bᎯᎠ([Ꭰ-Ᏼ]{2,})", "ᎯᎠ= $1");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏍᎩᏂ\\b", "$1 =ᏍᎩᏂ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏉᏃ\\b", "$1 =Ꮙ =Ꮓ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏰᏃ\\b", "$1 =ᏰᏃ");
 		line = line.replaceAll("^([Ꭰ-Ᏼ]{2,})Ꮓ\\b", "$1 =Ꮓ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꮙ\\b", "$1 =Ꮙ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ᏹ\\b", "$1 =Ᏹ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏗᏜ\\b", "$1 =ᏗᏜ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏗᏢ\\b", "$1 =ᏗᏢ");
 		return line;
 	}
 
