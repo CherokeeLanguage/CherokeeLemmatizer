@@ -95,6 +95,7 @@ public class AffixSplitter extends Thread {
 			line = doAlreadyHaveExtractions(line);
 			line = doAmbulativeExtractions(line);
 			line = doApproachingExtractions(line);
+			line = doDepartingExtractions(line);
 			line = doCompletelyExtractions(line);
 			line = doWillAlreadyExtractions(line);
 			line = suffixSplits(line);
@@ -608,22 +609,22 @@ public class AffixSplitter extends Thread {
 	}
 	
 	private String regex_alreadyHave = "\\b([ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(Ꭲ?)\\b";
-	private String regex_alreadyHaveReplace = "$1== $2 ==$3";
+	private String regex_alreadyHaveReplace = "$1== $2==$3 ";
 	private String doAlreadyHaveExtractions(String line) {
 		line=line.replaceAll(regex_alreadyHave, regex_alreadyHaveReplace);
 		if (line.contains("==")){
-			line=line.replace(" ==Ꭳ", "ᎥᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꭺ", "ᎬᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꮀ", "ᎲᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꮆ", "ᎸᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꮓ", "ᏅᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꮙ", "ᏋᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꮠ", "ᏒᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꮩ", "ᏛᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꮰ", "ᏢᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꮶ", "ᏨᎢ =ᎣᎢ");
-			line=line.replace(" ==Ꮼ", "ᏮᎢ =ᎣᎢ");
-			line=line.replace(" ==Ᏺ", "ᏴᎢ =ᎣᎢ");
+			line=line.replace("==Ꭳ ", "ᎥᎢ =ᎣᎢ ");
+			line=line.replace("==Ꭺ ", "ᎬᎢ =ᎣᎢ ");
+			line=line.replace("==Ꮀ ", "ᎲᎢ =ᎣᎢ ");
+			line=line.replace("==Ꮆ ", "ᎸᎢ =ᎣᎢ ");
+			line=line.replace("==Ꮓ ", "ᏅᎢ =ᎣᎢ ");
+			line=line.replace("==Ꮙ ", "ᏋᎢ =ᎣᎢ ");
+			line=line.replace("==Ꮠ ", "ᏒᎢ =ᎣᎢ ");
+			line=line.replace("==Ꮩ ", "ᏛᎢ =ᎣᎢ ");
+			line=line.replace("==Ꮰ ", "ᏢᎢ =ᎣᎢ ");
+			line=line.replace("==Ꮶ ", "ᏨᎢ =ᎣᎢ ");
+			line=line.replace("==Ꮼ ", "ᏮᎢ =ᎣᎢ ");
+			line=line.replace("==Ᏺ ", "ᏴᎢ =ᎣᎢ ");
 			line=line.replace("Ꮎ== ", "Ꮒ= Ꭰ");
 			line=line.replace("Ꮑ== ", "Ꮒ= Ꭱ");
 			line=line.replace("Ꮒ== ", "Ꮒ= ");
@@ -663,22 +664,22 @@ public class AffixSplitter extends Thread {
 	}
 	
 	private String regex_completely = "([Ꭰ-Ᏼ]{3,})([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(ᎲᏍᎪᎢ?|ᎲᏍᎨᎢ?|ᎲᏍᎬᎢ?|ᎲᏍᎬᎩ|ᏅᎢ?|ᏁᎢ?|ᏅᎩ|Ꮎ|ᎲᏍᏗ|ᎲᏍᎦ)\\b";
-	private String regex_completelyReplace = "$1==$2 =Ꭳ$3";
+	private String regex_completelyReplace = "$1==$2 =Ꭳ$3 ";
 	private String doCompletelyExtractions(String line) {
 		line=line.replaceAll(regex_completely, regex_completelyReplace);
 		if (line.contains("==")){
-			line=line.replace("==Ꭳ", "ᎥᎢ");
-			line=line.replace("==Ꭺ", "ᎬᎢ");
-			line=line.replace("==Ꮀ", "ᎲᎢ");
-			line=line.replace("==Ꮆ", "ᎸᎢ");
-			line=line.replace("==Ꮓ", "ᏅᎢ");
-			line=line.replace("==Ꮙ", "ᏋᎢ");
-			line=line.replace("==Ꮠ", "ᏒᎢ");
-			line=line.replace("==Ꮩ", "ᏛᎢ");
-			line=line.replace("==Ꮰ", "ᏢᎢ");
-			line=line.replace("==Ꮶ", "ᏨᎢ");
-			line=line.replace("==Ꮼ", "ᏮᎢ");
-			line=line.replace("==Ᏺ", "ᏴᎢ");
+			line=line.replace("==Ꭳ ", "ᎥᎢ ");
+			line=line.replace("==Ꭺ ", "ᎬᎢ ");
+			line=line.replace("==Ꮀ ", "ᎲᎢ ");
+			line=line.replace("==Ꮆ ", "ᎸᎢ ");
+			line=line.replace("==Ꮓ ", "ᏅᎢ ");
+			line=line.replace("==Ꮙ ", "ᏋᎢ ");
+			line=line.replace("==Ꮠ ", "ᏒᎢ ");
+			line=line.replace("==Ꮩ ", "ᏛᎢ ");
+			line=line.replace("==Ꮰ ", "ᏢᎢ ");
+			line=line.replace("==Ꮶ ", "ᏨᎢ ");
+			line=line.replace("==Ꮼ ", "ᏮᎢ ");
+			line=line.replace("==Ᏺ ", "ᏴᎢ ");
 		}
 		return line;
 	}
@@ -688,41 +689,71 @@ public class AffixSplitter extends Thread {
 	private String doApproachingExtractions(String line) {
 		line=line.replaceAll(regex_approaching, regex_approachingReplace);
 		if (line.contains("==")){
-			line=line.replace("==Ꭲ", " =ᎥᎢ");
-			line=line.replace("==Ꭹ", " =ᎬᎢ");
-			line=line.replace("==Ꭿ", " =ᎲᎢ");
-			line=line.replace("==Ꮅ", " =ᎸᎢ");
-			line=line.replace("==Ꮒ", " =ᏅᎢ");
-			line=line.replace("==Ꮘ", " =ᏋᎢ");
-			line=line.replace("==Ꮟ", " =ᏒᎢ");
-			line=line.replace("==Ꮧ", " =ᏛᎢ");
-			line=line.replace("==Ꮨ", " =ᏛᎢ");
-			line=line.replace("==Ꮯ", " =ᏢᎢ");
-			line=line.replace("==Ꮵ", " =ᏨᎢ");
-			line=line.replace("==Ꮻ", " =ᏮᎢ");
-			line=line.replace("==Ᏹ", " =ᏴᎢ");
+			line=line.replace("==Ꭲ ", "ᎥᎢ ");
+			line=line.replace("==Ꭹ ", "ᎬᎢ ");
+			line=line.replace("==Ꭿ ", "ᎲᎢ ");
+			line=line.replace("==Ꮅ ", "ᎸᎢ ");
+			line=line.replace("==Ꮒ ", "ᏅᎢ ");
+			line=line.replace("==Ꮘ ", "ᏋᎢ ");
+			line=line.replace("==Ꮟ ", "ᏒᎢ ");
+			line=line.replace("==Ꮧ ", "ᏛᎢ ");
+			line=line.replace("==Ꮨ ", "ᏛᎢ ");
+			line=line.replace("==Ꮯ ", "ᏢᎢ ");
+			line=line.replace("==Ꮵ ", "ᏨᎢ ");
+			line=line.replace("==Ꮻ ", "ᏮᎢ ");
+			line=line.replace("==Ᏹ ", "ᏴᎢ ");
+		}
+		return line;
+	}
+	
+	private String regex_departing = "([Ꭰ-Ᏼ]{3,})([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(ᏒᎢ?|ᏍᏗ)\\b";
+	private String regex_departingReplace = "$1$2Ꭲ =Ꭵ$3";
+	private String doDepartingExtractions(String line) {
+		line = line.replaceAll(regex_departing, regex_departingReplace);
+		line = doDepartingExtractions2(line);
+		return line;
+	}
+	
+	private String regex_departing2 = "([Ꭰ-Ᏼ]+)([ᎡᎨᎮᎴᎺᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭶ|ᎪᎢ?|ᎨᎢ?|ᎬᎢ?|Ꮎ)\\b";
+	private String regex_departingReplace2 = "$1==$2 =$3";
+	private String doDepartingExtractions2(String line) {
+		line=line.replaceAll(regex_departing2, regex_departingReplace2);
+		if (line.contains("==")){
+			line=line.replace("==Ꭱ ", "ᎥᎢ ");
+			line=line.replace("==Ꭸ ", "ᎬᎢ ");
+			line=line.replace("==Ꭾ ", "ᎲᎢ ");
+			line=line.replace("==Ꮄ ", "ᎸᎢ ");
+			line=line.replace("==Ꮑ ", "ᏅᎢ ");
+			line=line.replace("==Ꮗ ", "ᏋᎢ ");
+			line=line.replace("==Ꮞ ", "ᏒᎢ ");
+			line=line.replace("==Ꮥ ", "ᏛᎢ ");
+			line=line.replace("==Ꮦ ", "ᏛᎢ ");
+			line=line.replace("==Ꮮ ", "ᏢᎢ ");
+			line=line.replace("==Ꮴ ", "ᏨᎢ ");
+			line=line.replace("==Ꮺ ", "ᏮᎢ ");
+			line=line.replace("==Ᏸ ", "ᏴᎢ ");
 		}
 		return line;
 	}
 
 	private String regex_ambulative = "([Ꭰ-Ᏼ]{3,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(ᏙᎭ|ᏙᎸᎩ|ᏙᎸᎢ?|ᏙᎴᎢ?|ᏙᎰᎢ?|ᏙᎲᎩ|ᏙᎲᎢ?|ᏙᎮᏍᏗ|ᏙᎮᎢ?|ᏓᏍᏗ|Ꮣ)\\b";
-	private String regex_ambulativeReplace = "$1==$2 ==Ꭲ$3 ";
+	private String regex_ambulativeReplace = "$1==$2 =Ꭲ$3 ";
 	private String doAmbulativeExtractions(String line) {
 		line=line.replaceAll(regex_ambulative, regex_ambulativeReplace);
 		if (line.contains("==")){
-			line=line.replace("==Ꭲ", "ᎥᎢ");
-			line=line.replace("==Ꭹ", "ᎬᎢ");
-			line=line.replace("==Ꭿ", "ᎲᎢ");
-			line=line.replace("==Ꮅ", "ᎸᎢ");
-			line=line.replace("==Ꮒ", "ᏅᎢ");
-			line=line.replace("==Ꮘ", "ᏋᎢ");
-			line=line.replace("==Ꮟ", "ᏒᎢ");
-			line=line.replace("==Ꮧ", "ᏛᎢ");
-			line=line.replace("==Ꮨ", "ᏛᎢ");
-			line=line.replace("==Ꮯ", "ᏢᎢ");
-			line=line.replace("==Ꮵ", "ᏨᎢ");
-			line=line.replace("==Ꮻ", "ᏮᎢ");
-			line=line.replace("==Ᏹ", "ᏴᎢ");
+			line=line.replace("==Ꭲ ", "ᎥᎢ ");
+			line=line.replace("==Ꭹ ", "ᎬᎢ ");
+			line=line.replace("==Ꭿ ", "ᎲᎢ ");
+			line=line.replace("==Ꮅ ", "ᎸᎢ ");
+			line=line.replace("==Ꮒ ", "ᏅᎢ ");
+			line=line.replace("==Ꮘ ", "ᏋᎢ ");
+			line=line.replace("==Ꮟ ", "ᏒᎢ ");
+			line=line.replace("==Ꮧ ", "ᏛᎢ ");
+			line=line.replace("==Ꮨ ", "ᏛᎢ ");
+			line=line.replace("==Ꮯ ", "ᏢᎢ ");
+			line=line.replace("==Ꮵ ", "ᏨᎢ ");
+			line=line.replace("==Ꮻ ", "ᏮᎢ ");
+			line=line.replace("==Ᏹ ", "ᏴᎢ ");
 		}
 		return line;
 	}
