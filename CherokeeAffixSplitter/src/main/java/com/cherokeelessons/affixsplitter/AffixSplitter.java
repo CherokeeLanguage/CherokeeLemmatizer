@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -78,8 +79,14 @@ public class AffixSplitter extends Thread {
 	
 	private void process(String arg) throws IOException {
 		File absoluteFile = new File(arg).getAbsoluteFile();
-		File output = File.createTempFile(absoluteFile.getName(), ".tmp", absoluteFile.getParentFile());
-		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(output), "UTF-8");
+		File output=null;
+		PrintStream writer;
+		if (!stdout) {
+			output = File.createTempFile(absoluteFile.getName(), ".tmp", absoluteFile.getParentFile());
+			writer = new PrintStream(new FileOutputStream(output), true, "UTF-8");
+		} else {
+			writer = System.out;
+		}
 		LineIterator lines = FileUtils.lineIterator(absoluteFile, "UTF-8");
 		while (lines.hasNext()) {
 			String line = lines.next();
@@ -95,23 +102,29 @@ public class AffixSplitter extends Thread {
 			if (doPronouns) {
 				line = simplePronounSplits(line);
 			}
-			writer.write(line);
-			writer.write("\n");
+			writer.println(line);
 		}
-		writer.close();
 		lines.close();
-		FileUtils.copyFile(output, absoluteFile);
-		output.delete();
+		writer.flush();
+		if (!stdout) {
+			writer.close();
+			FileUtils.copyFile(output, absoluteFile);
+			output.delete();
+		}
 	}
 	
 	private final String[] args;
 	private boolean doPronouns=false;
-
+	private boolean stdout=false;
+	
 	public AffixSplitter(String[] args) {
 		this.args=args;
 		for (String arg: args) {
 			if ("--doPronouns".equals(arg)) {
 				doPronouns=true;
+			}
+			if ("--stdout".equals(arg)) {
+				stdout=true;
 			}
 		}
 	}
@@ -579,156 +592,137 @@ public class AffixSplitter extends Thread {
 		}
 	}
 
-	private String regex_without = "\\b(Ᏹ?[ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)\\b";
-	private String regex_without_replace = "$1==$2$3Ꭲ =Ꭵ$4";
+	private String regex_without = "\\b(Ᏹ?Ꮻ?[ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)\\b";
+	private String regex_without_replace = "$1== $2$3Ꭲ =Ꭵ$4";
 	private String doWithoutExtractions(String line) {
 		line=line.replaceAll(regex_without, regex_without_replace);
 		if (line.contains("==")){
-			line=line.replace("ᏱᎾ==", "Ᏹ= Ꮒ= Ꭰ");
-			line=line.replace("ᏱᏁ==", "Ᏹ= Ꮒ= Ꭱ");
-			line=line.replace("ᏱᏂ==", "Ᏹ= Ꮒ= ");
-			line=line.replace("ᏱᏃ==", "Ᏹ= Ꮒ= Ꭳ");
-			line=line.replace("ᏱᏄ==", "Ᏹ= Ꮒ= Ꭴ");
-			line=line.replace("ᏱᏅ==", "Ᏹ= Ꮒ= Ꭵ");
-			line=line.replace("Ꮎ==", "Ꮒ= Ꭰ");
-			line=line.replace("Ꮑ==", "Ꮒ= Ꭱ");
-			line=line.replace("Ꮒ==", "Ꮒ= ");
-			line=line.replace("Ꮓ==", "Ꮒ= Ꭳ");
-			line=line.replace("Ꮔ==", "Ꮒ= Ꭴ");
-			line=line.replace("Ꮕ==", "Ꮒ= Ꭵ");
+			line=line.replace("Ꮎ== ", "Ꮒ= Ꭰ");
+			line=line.replace("Ꮑ== ", "Ꮒ= Ꭱ");
+			line=line.replace("Ꮒ== ", "Ꮒ= ");
+			line=line.replace("Ꮓ== ", "Ꮒ= Ꭳ");
+			line=line.replace("Ꮔ== ", "Ꮒ= Ꭴ");
+			line=line.replace("Ꮕ== ", "Ꮒ= Ꭵ");
 		}
 		return line;
 	}
 	
-	private String regex_alreadyHave = "\\b(Ᏹ?[ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(Ꭲ?)\\b";
-	private String regex_alreadyHaveReplace = "$1==$2Ꭲ ==$3Ꭲ";
+	private String regex_alreadyHave = "\\b([ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(Ꭲ?)\\b";
+	private String regex_alreadyHaveReplace = "$1== $2 ==$3";
 	private String doAlreadyHaveExtractions(String line) {
 		line=line.replaceAll(regex_alreadyHave, regex_alreadyHaveReplace);
 		if (line.contains("==")){
-			line=line.replace(" ==Ꭳ", " =Ꭵ");
-			line=line.replace(" ==Ꭺ", " =Ꭼ");
-			line=line.replace(" ==Ꮀ", " =Ꮂ");
-			line=line.replace(" ==Ꮆ", " =Ꮈ");
-			line=line.replace(" ==Ꮓ", " =Ꮕ");
-			line=line.replace(" ==Ꮙ", " =Ꮛ");
-			line=line.replace(" ==Ꮠ", " =Ꮢ");
-			line=line.replace(" ==Ꮩ", " =Ꮫ");
-			line=line.replace(" ==Ꮰ", " =Ꮲ");
-			line=line.replace(" ==Ꮶ", " =Ꮸ");
-			line=line.replace(" ==Ꮼ", " =Ꮾ");
-			line=line.replace(" ==Ᏺ", " =Ᏼ");
-			line=line.replace("ᏱᎾ==", "Ᏹ= Ꮒ= Ꭰ");
-			line=line.replace("ᏱᏁ==", "Ᏹ= Ꮒ= Ꭱ");
-			line=line.replace("ᏱᏂ==", "Ᏹ= Ꮒ= ");
-			line=line.replace("ᏱᏃ==", "Ᏹ= Ꮒ= Ꭳ");
-			line=line.replace("ᏱᏄ==", "Ᏹ= Ꮒ= Ꭴ");
-			line=line.replace("ᏱᏅ==", "Ᏹ= Ꮒ= Ꭵ");
-			line=line.replace("Ꮎ==", "Ꮒ= Ꭰ");
-			line=line.replace("Ꮑ==", "Ꮒ= Ꭱ");
-			line=line.replace("Ꮒ==", "Ꮒ= ");
-			line=line.replace("Ꮓ==", "Ꮒ= Ꭳ");
-			line=line.replace("Ꮔ==", "Ꮒ= Ꭴ");
-			line=line.replace("Ꮕ==", "Ꮒ= Ꭵ");
+			line=line.replace(" ==Ꭳ", "ᎥᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꭺ", "ᎬᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꮀ", "ᎲᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꮆ", "ᎸᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꮓ", "ᏅᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꮙ", "ᏋᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꮠ", "ᏒᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꮩ", "ᏛᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꮰ", "ᏢᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꮶ", "ᏨᎢ =ᎣᎢ");
+			line=line.replace(" ==Ꮼ", "ᏮᎢ =ᎣᎢ");
+			line=line.replace(" ==Ᏺ", "ᏴᎢ =ᎣᎢ");
+			line=line.replace("Ꮎ== ", "Ꮒ= Ꭰ");
+			line=line.replace("Ꮑ== ", "Ꮒ= Ꭱ");
+			line=line.replace("Ꮒ== ", "Ꮒ= ");
+			line=line.replace("Ꮓ== ", "Ꮒ= Ꭳ");
+			line=line.replace("Ꮔ== ", "Ꮒ= Ꭴ");
+			line=line.replace("Ꮕ== ", "Ꮒ= Ꭵ");
 		}
 		return line;
 	}
 	
 	private String regex_willAlready = "\\b(Ᏹ?[ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎡᎨᎮᎴᎺᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(ᏍᏗ)\\b";
-	private String regex_willAlreadyReplace = "$1==$2Ꭲ ==$3Ꭲ";
+	private String regex_willAlreadyReplace = "$1== $2==$3 ᎡᏍᏗ";
 	private String doWillAlreadyExtractions(String line) {
 		line=line.replaceAll(regex_willAlready, regex_willAlreadyReplace);
 		if (line.contains("==")){
-			line=line.replace(" ==Ꭱ", " =Ꭳ");
-			line=line.replace(" ==Ꭸ", " =Ꭺ");
-			line=line.replace(" ==Ꭾ", " =Ꮀ");
-			line=line.replace(" ==Ꮄ", " =Ꭳ");
-			line=line.replace(" ==Ꮊ", " =Ꮌ");
-			line=line.replace(" ==Ꮑ", " =Ꮓ");
-			line=line.replace(" ==Ꮗ", " =Ꮙ");
-			line=line.replace(" ==Ꮞ", " =Ꮠ");
-			line=line.replace(" ==Ꮥ", " =Ꮩ");
-			line=line.replace(" ==Ꮦ", " =Ꮩ");
-			line=line.replace(" ==Ꮮ", " =Ꮰ");
-			line=line.replace(" ==Ꮴ", " =Ꮶ");
-			line=line.replace(" ==Ꮺ", " =Ꮼ");
-			line=line.replace(" ==Ᏸ", " =Ᏺ");
-			line=line.replace("ᏱᎾ==", "Ᏹ= Ꮒ= Ꭰ");
-			line=line.replace("ᏱᏁ==", "Ᏹ= Ꮒ= Ꭱ");
-			line=line.replace("ᏱᏂ==", "Ᏹ= Ꮒ= ");
-			line=line.replace("ᏱᏃ==", "Ᏹ= Ꮒ= Ꭳ");
-			line=line.replace("ᏱᏄ==", "Ᏹ= Ꮒ= Ꭴ");
-			line=line.replace("ᏱᏅ==", "Ᏹ= Ꮒ= Ꭵ");
-			line=line.replace("Ꮎ==", "Ꮒ= Ꭰ");
-			line=line.replace("Ꮑ==", "Ꮒ= Ꭱ");
-			line=line.replace("Ꮒ==", "Ꮒ= ");
-			line=line.replace("Ꮓ==", "Ꮒ= Ꭳ");
-			line=line.replace("Ꮔ==", "Ꮒ= Ꭴ");
-			line=line.replace("Ꮕ==", "Ꮒ= Ꭵ");
+			line=line.replace("==Ꭱ ", "ᎥᎢ ");
+			line=line.replace("==Ꭸ ", "ᎬᎢ ");
+			line=line.replace("==Ꭾ ", "ᎲᎢ ");
+			line=line.replace("==Ꮄ ", "ᎸᎢ ");
+			line=line.replace("==Ꮑ ", "ᏅᎢ ");
+			line=line.replace("==Ꮗ ", "ᏋᎢ ");
+			line=line.replace("==Ꮞ ", "ᏒᎢ ");
+			line=line.replace("==Ꮥ ", "ᏛᎢ ");
+			line=line.replace("==Ꮦ ", "ᏛᎢ ");
+			line=line.replace("==Ꮮ ", "ᏢᎢ ");
+			line=line.replace("==Ꮴ ", "ᏨᎢ ");
+			line=line.replace("==Ꮺ ", "ᏮᎢ ");
+			line=line.replace("==Ᏸ ", "ᏴᎢ ");
+			line=line.replace("Ꮎ== ", "Ꮒ= Ꭰ");
+			line=line.replace("Ꮑ== ", "Ꮒ= Ꭱ");
+			line=line.replace("Ꮒ== ", "Ꮒ= ");
+			line=line.replace("Ꮓ== ", "Ꮒ= Ꭳ");
+			line=line.replace("Ꮔ== ", "Ꮒ= Ꭴ");
+			line=line.replace("Ꮕ== ", "Ꮒ= Ꭵ");
 		}
 		return line;
 	}
 	
-	private String regex_completely = "([Ꭰ-Ᏼ]{3,})(ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ)(ᎲᏍᎪᎢ|ᎲᏍᎪ|ᎲᏍᎨᎢ|ᎲᏍᎨ|ᎲᏍᎬᎢ|ᎲᏍᎬ|ᎲᏍᎬᎩ|ᏅᎢ|Ꮕ|ᏁᎢ|Ꮑ|ᏅᎩ|Ꮎ|ᎲᏍᏗ|ᎲᏍᎦ)\\b";
-	private String regex_completelyReplace = "$1 ==$2Ꭲ =Ꭳ$3";
+	private String regex_completely = "([Ꭰ-Ᏼ]{3,})([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(ᎲᏍᎪᎢ?|ᎲᏍᎨᎢ?|ᎲᏍᎬᎢ?|ᎲᏍᎬᎩ|ᏅᎢ?|ᏁᎢ?|ᏅᎩ|Ꮎ|ᎲᏍᏗ|ᎲᏍᎦ)\\b";
+	private String regex_completelyReplace = "$1==$2 =Ꭳ$3";
 	private String doCompletelyExtractions(String line) {
 		line=line.replaceAll(regex_completely, regex_completelyReplace);
 		if (line.contains("==")){
-			line=line.replace(" ==Ꭳ", " =Ꭵ");
-			line=line.replace(" ==Ꭺ", " =Ꭼ");
-			line=line.replace(" ==Ꮀ", " =Ꮂ");
-			line=line.replace(" ==Ꮆ", " =Ꮈ");
-			line=line.replace(" ==Ꮓ", " =Ꮕ");
-			line=line.replace(" ==Ꮙ", " =Ꮛ");
-			line=line.replace(" ==Ꮠ", " =Ꮢ");
-			line=line.replace(" ==Ꮩ", " =Ꮫ");
-			line=line.replace(" ==Ꮰ", " =Ꮲ");
-			line=line.replace(" ==Ꮶ", " =Ꮸ");
-			line=line.replace(" ==Ꮼ", " =Ꮾ");
-			line=line.replace(" ==Ᏺ", " =Ᏼ");
+			line=line.replace("==Ꭳ", "ᎥᎢ");
+			line=line.replace("==Ꭺ", "ᎬᎢ");
+			line=line.replace("==Ꮀ", "ᎲᎢ");
+			line=line.replace("==Ꮆ", "ᎸᎢ");
+			line=line.replace("==Ꮓ", "ᏅᎢ");
+			line=line.replace("==Ꮙ", "ᏋᎢ");
+			line=line.replace("==Ꮠ", "ᏒᎢ");
+			line=line.replace("==Ꮩ", "ᏛᎢ");
+			line=line.replace("==Ꮰ", "ᏢᎢ");
+			line=line.replace("==Ꮶ", "ᏨᎢ");
+			line=line.replace("==Ꮼ", "ᏮᎢ");
+			line=line.replace("==Ᏺ", "ᏴᎢ");
 		}
 		return line;
 	}
 	
-	private String regex_approaching = "([Ꭰ-Ᏼ]{3,})(ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ)(Ꭶ|ᎸᎢ|ᎸᎩ|ᎴᎢ|Ꮄ|Ꮈ|ᎯᎰᎢ|ᎯᎰ|ᎯᎲᎢ|ᎯᎲ|ᎯᎲᎩ|ᎯᎮᎢ|ᎯᎮ|ᎯᎮᏍᏗ|ᏍᏗ)\\b";
-	private String regex_approachingReplace = "$1 ==$2Ꭲ =Ꭲ$3";
+	private String regex_approaching = "([Ꭰ-Ᏼ]{3,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(Ꭶ|ᎸᎢ?|ᎸᎩ|ᎴᎢ?|ᎯᎰᎢ?|ᎯᎲᎢ?|ᎯᎲᎩ|ᎯᎮᎢ?|ᎯᎮᏍᏗ|ᏍᏗ)\\b";
+	private String regex_approachingReplace = "$1==$2 =Ꭲ$3";
 	private String doApproachingExtractions(String line) {
 		line=line.replaceAll(regex_approaching, regex_approachingReplace);
 		if (line.contains("==")){
-			line=line.replace(" ==Ꭲ", " =Ꭵ");
-			line=line.replace(" ==Ꭹ", " =Ꭼ");
-			line=line.replace(" ==Ꭿ", " =Ꮂ");
-			line=line.replace(" ==Ꮅ", " =Ꮈ");
-			line=line.replace(" ==Ꮒ", " =Ꮕ");
-			line=line.replace(" ==Ꮘ", " =Ꮛ");
-			line=line.replace(" ==Ꮟ", " =Ꮢ");
-			line=line.replace(" ==Ꮧ", " =Ꮫ");
-			line=line.replace(" ==Ꮨ", " =Ꮫ");
-			line=line.replace(" ==Ꮯ", " =Ꮲ");
-			line=line.replace(" ==Ꮵ", " =Ꮸ");
-			line=line.replace(" ==Ꮻ", " =Ꮾ");
-			line=line.replace(" ==Ᏹ", " =Ᏼ");
+			line=line.replace("==Ꭲ", " =ᎥᎢ");
+			line=line.replace("==Ꭹ", " =ᎬᎢ");
+			line=line.replace("==Ꭿ", " =ᎲᎢ");
+			line=line.replace("==Ꮅ", " =ᎸᎢ");
+			line=line.replace("==Ꮒ", " =ᏅᎢ");
+			line=line.replace("==Ꮘ", " =ᏋᎢ");
+			line=line.replace("==Ꮟ", " =ᏒᎢ");
+			line=line.replace("==Ꮧ", " =ᏛᎢ");
+			line=line.replace("==Ꮨ", " =ᏛᎢ");
+			line=line.replace("==Ꮯ", " =ᏢᎢ");
+			line=line.replace("==Ꮵ", " =ᏨᎢ");
+			line=line.replace("==Ꮻ", " =ᏮᎢ");
+			line=line.replace("==Ᏹ", " =ᏴᎢ");
 		}
 		return line;
 	}
 
-	private String regex_ambulative = "([Ꭰ-Ᏼ]{3,})(ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ)(ᏙᎭ|ᏙᎸᎩ|ᏙᎸᎢ|ᏙᎸ|ᏙᎴᎢ|ᏙᎴ|ᏙᎰᎢ|ᏙᎰ|ᏙᎲᎩ|ᏙᎲᎢ|ᏙᎲ|ᏙᎮᎢ|ᏙᎮ|ᏙᎮᏍᏗ|Ꮣ|ᏓᏍᏗ)\\b";
-	private String regex_ambulativeReplace = "$1 ==$2Ꭲ =Ꭲ$3";
+	private String regex_ambulative = "([Ꭰ-Ᏼ]{3,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(ᏙᎭ|ᏙᎸᎩ|ᏙᎸᎢ?|ᏙᎴᎢ?|ᏙᎰᎢ?|ᏙᎲᎩ|ᏙᎲᎢ?|ᏙᎮᏍᏗ|ᏙᎮᎢ?|ᏓᏍᏗ|Ꮣ)\\b";
+	private String regex_ambulativeReplace = "$1==$2 ==Ꭲ$3 ";
 	private String doAmbulativeExtractions(String line) {
 		line=line.replaceAll(regex_ambulative, regex_ambulativeReplace);
 		if (line.contains("==")){
-			line=line.replace(" ==Ꭲ", " =Ꭵ");
-			line=line.replace(" ==Ꭹ", " =Ꭼ");
-			line=line.replace(" ==Ꭿ", " =Ꮂ");
-			line=line.replace(" ==Ꮅ", " =Ꮈ");
-			line=line.replace(" ==Ꮒ", " =Ꮕ");
-			line=line.replace(" ==Ꮘ", " =Ꮛ");
-			line=line.replace(" ==Ꮟ", " =Ꮢ");
-			line=line.replace(" ==Ꮧ", " =Ꮫ");
-			line=line.replace(" ==Ꮨ", " =Ꮫ");
-			line=line.replace(" ==Ꮯ", " =Ꮲ");
-			line=line.replace(" ==Ꮵ", " =Ꮸ");
-			line=line.replace(" ==Ꮻ", " =Ꮾ");
-			line=line.replace(" ==Ᏹ", " =Ᏼ");
+			line=line.replace("==Ꭲ", "ᎥᎢ");
+			line=line.replace("==Ꭹ", "ᎬᎢ");
+			line=line.replace("==Ꭿ", "ᎲᎢ");
+			line=line.replace("==Ꮅ", "ᎸᎢ");
+			line=line.replace("==Ꮒ", "ᏅᎢ");
+			line=line.replace("==Ꮘ", "ᏋᎢ");
+			line=line.replace("==Ꮟ", "ᏒᎢ");
+			line=line.replace("==Ꮧ", "ᏛᎢ");
+			line=line.replace("==Ꮨ", "ᏛᎢ");
+			line=line.replace("==Ꮯ", "ᏢᎢ");
+			line=line.replace("==Ꮵ", "ᏨᎢ");
+			line=line.replace("==Ꮻ", "ᏮᎢ");
+			line=line.replace("==Ᏹ", "ᏴᎢ");
 		}
 		return line;
 	}
@@ -749,7 +743,39 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 
+	private String yi_prefix="\\b([ᏯᏰᏱᏲᏳᏴ])([Ꭰ-Ᏼ]{3,})";
+	private String yi_prefixReplace="$1==$2";
+	private String doYiPrefixSplit(String line) {
+		line=line.replaceAll(yi_prefix, yi_prefixReplace);
+		if (line.contains("==")){
+			line=line.replace("Ꮿ==", "Ᏹ= Ꭰ");
+			line=line.replace("Ᏸ==", "Ᏹ= Ꭱ");
+			line=line.replace("Ᏹ==", "Ᏹ= ");
+			line=line.replace("Ᏺ==", "Ᏹ= Ꭳ");
+			line=line.replace("Ᏻ==", "Ᏹ= Ꭴ");
+			line=line.replace("Ᏼ==", "Ᏹ= Ꭵ");
+		}
+		return line;
+	}
+	
+	private String wi_prefix="\\b([ᏩᏪᏫᏬᏭᏮ])([Ꭰ-Ᏼ]{3,})";
+	private String wi_prefixReplace="$1==$2";
+	private String doWiPrefixSplit(String line) {
+		line=line.replaceAll(wi_prefix, wi_prefixReplace);
+		if (line.contains("==")){
+			line=line.replace("Ꮹ==", "Ꮻ= Ꭰ");
+			line=line.replace("Ꮺ==", "Ꮻ= Ꭱ");
+			line=line.replace("Ꮻ==", "Ꮻ= ");
+			line=line.replace("Ꮼ==", "Ꮻ= Ꭳ");
+			line=line.replace("Ꮽ==", "Ꮻ= Ꭴ");
+			line=line.replace("Ꮾ==", "Ꮻ= Ꭵ");
+		}
+		return line;
+	}
+	
 	private String simpleAffixSplits(String line) {
+		line = doYiPrefixSplit(line);
+		line = doWiPrefixSplit(line);
 		line = line.replaceAll("\\bᎯᎠ([Ꭰ-Ᏼ]{2,})", "ᎯᎠ= $1");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏍᎩᏂ\\b", "$1 =ᏍᎩᏂ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏉᏃ\\b", "$1 =Ꮙ =Ꮓ");
@@ -759,6 +785,7 @@ public class AffixSplitter extends Thread {
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꮓ\\b", "$1 =Ꮓ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꮙ\\b", "$1 =Ꮙ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ᏹ\\b", "$1 =Ᏹ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ᏻ\\b", "$1 =Ᏻ");
 		return line;
 	}
 
