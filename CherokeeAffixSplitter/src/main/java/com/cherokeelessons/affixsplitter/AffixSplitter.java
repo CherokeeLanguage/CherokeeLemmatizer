@@ -3,7 +3,6 @@ package com.cherokeelessons.affixsplitter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,12 +14,6 @@ import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 
 public class AffixSplitter extends Thread {
-	
-	private final static String[] bene_affixpre;
-	private final static String[] bene_affixreplace;
-	private static final String benefactiveSplitter;
-	private static final String[] benefixupMatchlist;
-	private static final String[] benefixupReplacelist;
 	
 	private static final List<PatternMatchReplacement> pronouns;
 	private static final String pronoun_splitter;
@@ -35,13 +28,6 @@ public class AffixSplitter extends Thread {
 	private static final String[] c_v;
 	
 	static {
-		bene_affixpre = new String[]{"Ꭱ", "Ꭸ", "Ꭾ", "Ꮄ", "Ꮑ", "Ꮗ", "Ꮞ", "Ꮥ", "Ꮦ", "Ꮮ", "Ꮴ", "Ꮺ", "Ᏸ"};
-		bene_affixreplace = new String[]{"ᎥᎢ", "ᎬᎢ", "ᎲᎢ", "ᎸᎢ", "ᏅᎢ", "ᏋᎢ", "ᏒᎢ", "ᏛᎢ", "ᏛᎢ", "ᏢᎢ", "ᏨᎢ", "ᏮᎢ", "ᏴᎢ"};
-		
-		benefactiveSplitter = getBenefactiveSplitter();
-		benefixupMatchlist = getBenefactiveSplitterFixupMatch().toArray(new String[0]);
-		benefixupReplacelist = getBenefactiveSplitterFixupReplace().toArray(new String[0]);
-		
 		c_v = new String[]{"Ꭵ","Ꭼ","Ꮂ","Ꮈ","Ꮕ","Ꮛ","Ꮢ","Ꮫ","Ꮲ","Ꮸ","Ꮾ","Ᏼ"};
 
 		StringBuilder tmp = new StringBuilder();
@@ -98,8 +84,8 @@ public class AffixSplitter extends Thread {
 			line = doDepartingExtractions(line);
 			line = doCompletelyExtractions(line);
 			line = doWillAlreadyExtractions(line);
+			line = doBenefactiveExtractions(line);
 			line = suffixSplits(line);
-			line = benefactiveSplit(line);
 			if (doPronouns) {
 				line = simplePronounSplits(line);
 			}
@@ -114,6 +100,28 @@ public class AffixSplitter extends Thread {
 		}
 	}
 	
+	private String regex_benefactive = "([Ꭰ-Ᏼ]{3,})([ᎡᎨᎮᎴᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭽ|ᎸᎢ?|ᎰᎢ?|ᎲᎢ?|ᎮᎢ?|ᎮᏍᏗ|Ꮅ|Ꮧ)\\b";
+	private String regex_benefactiveReplace = "$1==$2 =Ꭱ$3 ";
+	private String doBenefactiveExtractions(String line) {
+		line=line.replaceAll(regex_benefactive, regex_benefactiveReplace);
+		if (line.contains("==")){
+			line=line.replace("==Ꭱ ", "ᎥᎢ ");
+			line=line.replace("==Ꭸ ", "ᎬᎢ ");
+			line=line.replace("==Ꭾ ", "ᎲᎢ ");
+			line=line.replace("==Ꮄ ", "ᎸᎢ ");
+			line=line.replace("==Ꮑ ", "ᏅᎢ ");
+			line=line.replace("==Ꮗ ", "ᏋᎢ ");
+			line=line.replace("==Ꮞ ", "ᏒᎢ ");
+			line=line.replace("==Ꮥ ", "ᏛᎢ ");
+			line=line.replace("==Ꮦ ", "ᏛᎢ ");
+			line=line.replace("==Ꮮ ", "ᏢᎢ ");
+			line=line.replace("==Ꮴ ", "ᏨᎢ ");
+			line=line.replace("==Ꮺ ", "ᏮᎢ ");
+			line=line.replace("==Ᏸ ", "ᏴᎢ ");
+		}
+		return line;
+	}
+
 	private final String[] args;
 	private boolean doPronouns=false;
 	private boolean stdout=false;
@@ -818,94 +826,5 @@ public class AffixSplitter extends Thread {
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ᏹ\\b", "$1 =Ᏹ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ᏻ\\b", "$1 =Ᏻ");
 		return line;
-	}
-
-	private static String benefactiveSplit(String line) {
-		line = line.replaceAll(benefactiveSplitter, "$1 =$2");
-		line = StringUtils.replaceEach(line, benefixupMatchlist, benefixupReplacelist);
-		return line;
-	}
-	
-	private static String getBenefactiveSplitter(){
-		List<String> matches=new ArrayList<>();
-		for (String prefix: bene_affixpre){
-			matches.add(prefix+"Ꭽ");
-			matches.add(prefix+"ᎸᎢ");
-			matches.add(prefix+"Ꮈ");
-			matches.add(prefix+"ᎴᎢ");
-			matches.add(prefix+"Ꮄ");
-			matches.add(prefix+"Ꮅ");
-			matches.add(prefix+"ᎰᎢ");
-			matches.add(prefix+"Ꮀ");
-			matches.add(prefix+"ᎲᎢ");
-			matches.add(prefix+"Ꮂ");
-			matches.add(prefix+"ᎮᏍᏗ");
-			matches.add(prefix+"Ꮅ");
-			matches.add(prefix+"Ꮧ");
-			
-			matches.add(prefix+"ᎸᎩ");
-			matches.add(prefix+"ᎮᎢ");
-			matches.add(prefix+"Ꭾ");
-		}
-		Collections.sort(matches,(a,b)->{
-			if (a==null) {
-				return -1;
-			}
-			if (b==null) {
-				return 1;
-			}
-			if (a.length()==b.length()) {
-				return a.compareTo(b);
-			}
-			return b.length()-a.length();
-		});
-		String pattern = "([Ꭰ-Ᏼ]{3,})("+StringUtils.join(matches, "|")+")\\b";
-		return pattern;
-	}
-	
-	private static List<String> getBenefactiveSplitterFixupReplace(){
-		List<String> replacements=new ArrayList<>();
-		for (String prefix: bene_affixreplace){
-			replacements.add(prefix+" =ᎡᎭ");
-			replacements.add(prefix+" =ᎡᎸᎢ");
-			replacements.add(prefix+" =ᎡᎸ");
-			replacements.add(prefix+" =ᎡᎴᎢ");
-			replacements.add(prefix+" =ᎡᎴ");
-			replacements.add(prefix+" =ᎡᎵ");
-			replacements.add(prefix+" =ᎡᎰᎢ");
-			replacements.add(prefix+" =ᎡᎰ");
-			replacements.add(prefix+" =ᎡᎲᎢ");
-			replacements.add(prefix+" =ᎡᎲ");
-			replacements.add(prefix+" =ᎡᎮᏍᏗ");
-			replacements.add(prefix+" =ᎡᎵ");
-			replacements.add(prefix+" =ᎡᏗ");
-			replacements.add(prefix+" =ᎡᎸᎩ");
-			replacements.add(prefix+" =ᎡᎮᎢ");
-			replacements.add(prefix+" =ᎡᎮ");
-		}
-		return replacements;
-	}
-	
-	private static List<String> getBenefactiveSplitterFixupMatch(){
-		List<String> matches=new ArrayList<>();
-		for (String prefix: bene_affixpre){
-			matches.add(" ="+prefix+"Ꭽ");
-			matches.add(" ="+prefix+"ᎸᎢ");
-			matches.add(" ="+prefix+"Ꮈ");
-			matches.add(" ="+prefix+"ᎴᎢ");
-			matches.add(" ="+prefix+"Ꮄ");
-			matches.add(" ="+prefix+"Ꮅ");
-			matches.add(" ="+prefix+"ᎰᎢ");
-			matches.add(" ="+prefix+"Ꮀ");
-			matches.add(" ="+prefix+"ᎲᎢ");
-			matches.add(" ="+prefix+"Ꮂ");
-			matches.add(" ="+prefix+"ᎮᏍᏗ");
-			matches.add(" ="+prefix+"Ꮅ");
-			matches.add(" ="+prefix+"Ꮧ");
-			matches.add(" ="+prefix+"ᎸᎩ");
-			matches.add(" ="+prefix+"ᎮᎢ");
-			matches.add(" ="+prefix+"Ꭾ");
-		}
-		return matches;
 	}
 }
