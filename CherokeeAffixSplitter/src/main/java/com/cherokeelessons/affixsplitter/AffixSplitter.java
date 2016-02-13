@@ -100,7 +100,7 @@ public class AffixSplitter extends Thread {
 		}
 	}
 	
-	private String regex_benefactive = "([Ꭰ-Ᏼ]{3,})([ᎡᎨᎮᎴᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭽ|ᎸᎢ?|ᎰᎢ?|ᎲᎢ?|ᎮᎢ?|ᎮᏍᏗ|Ꮅ|Ꮧ)\\b";
+	private String regex_benefactive = "([Ꭰ-Ᏼ]{2,})([ᎡᎨᎮᎴᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭽ|ᎸᎢ?|ᎰᎢ?|ᎲᎢ?|ᎮᎢ?|ᎮᏍᏗ|Ꮅ|Ꮧ)\\b";
 	private String regex_benefactiveReplace = "$1==$2 =Ꭱ$3 ";
 	private String doBenefactiveExtractions(String line) {
 		line=line.replaceAll(regex_benefactive, regex_benefactiveReplace);
@@ -616,7 +616,7 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 	
-	private String regex_alreadyHave = "\\b([ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(Ꭲ?)\\b";
+	private String regex_alreadyHave = "\\b([ᎾᏁᏂᏃᏄᏅ]{2,})([Ꭰ-Ᏼ]+)([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(Ꭲ?)\\b";
 	private String regex_alreadyHaveReplace = "$1== $2==$3 ";
 	private String doAlreadyHaveExtractions(String line) {
 		line=line.replaceAll(regex_alreadyHave, regex_alreadyHaveReplace);
@@ -643,7 +643,7 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 	
-	private String regex_willAlready = "\\b(Ᏹ?[ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎡᎨᎮᎴᎺᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(ᏍᏗ)\\b";
+	private String regex_willAlready = "\\b(Ᏹ?[ᎾᏁᏂᏃᏄᏅ]{2,})([Ꭰ-Ᏼ]+)([ᎡᎨᎮᎴᎺᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(ᏍᏗ)\\b";
 	private String regex_willAlreadyReplace = "$1== $2==$3 ᎡᏍᏗ";
 	private String doWillAlreadyExtractions(String line) {
 		line=line.replaceAll(regex_willAlready, regex_willAlreadyReplace);
@@ -671,7 +671,7 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 	
-	private String regex_completely = "([Ꭰ-Ᏼ]{3,})([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(ᎲᏍᎪᎢ?|ᎲᏍᎨᎢ?|ᎲᏍᎬᎢ?|ᎲᏍᎬᎩ|ᏅᎢ?|ᏁᎢ?|ᏅᎩ|Ꮎ|ᎲᏍᏗ|ᎲᏍᎦ)\\b";
+	private String regex_completely = "([Ꭰ-Ᏼ]{2,})([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(ᎲᏍᎪᎢ?|ᎲᏍᎨᎢ?|ᎲᏍᎬᎢ?|ᎲᏍᎬᎩ|ᏅᎢ?|ᏁᎢ?|ᏅᎩ|Ꮎ|ᎲᏍᏗ|ᎲᏍᎦ)\\b";
 	private String regex_completelyReplace = "$1==$2 =Ꭳ$3 ";
 	private String doCompletelyExtractions(String line) {
 		line=line.replaceAll(regex_completely, regex_completelyReplace);
@@ -692,7 +692,7 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 	
-	private String regex_approaching = "([Ꭰ-Ᏼ]{3,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(Ꭶ|ᎸᎢ?|ᎸᎩ|ᎴᎢ?|ᎯᎰᎢ?|ᎯᎲᎢ?|ᎯᎲᎩ|ᎯᎮᎢ?|ᎯᎮᏍᏗ|ᏍᏗ)\\b";
+	private String regex_approaching = "([Ꭰ-Ᏼ]{2,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(Ꭶ|ᎸᎢ?|ᎸᎩ|ᎴᎢ?|ᎯᎰᎢ?|ᎯᎲᎢ?|ᎯᎲᎩ|ᎯᎮᎢ?|ᎯᎮᏍᏗ|ᏍᏗ)\\b";
 	private String regex_approachingReplace = "$1==$2 =Ꭲ$3";
 	private String doApproachingExtractions(String line) {
 		line=line.replaceAll(regex_approaching, regex_approachingReplace);
@@ -714,7 +714,7 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 	
-	private String regex_departing = "([Ꭰ-Ᏼ]{3,})([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(ᏒᎢ?|ᏍᏗ)\\b";
+	private String regex_departing = "([Ꭰ-Ᏼ]{2,})([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(ᏒᎢ?|ᏍᏗ)\\b";
 	private String regex_departingReplace = "$1$2Ꭲ =Ꭵ$3";
 	private String doDepartingExtractions(String line) {
 		line = line.replaceAll(regex_departing, regex_departingReplace);
@@ -722,7 +722,7 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 	
-	private String regex_departing2 = "([Ꭰ-Ᏼ]+)([ᎡᎨᎮᎴᎺᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭶ|ᎪᎢ?|ᎨᎢ?|ᎬᎢ?|Ꮎ)\\b";
+	private String regex_departing2 = "([Ꭰ-Ᏼ]{2,})([ᎡᎨᎮᎴᎺᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭶ|ᎪᎢ?|ᎨᎢ?|ᎬᎢ?|Ꮎ)\\b";
 	private String regex_departingReplace2 = "$1==$2 =$3";
 	private String doDepartingExtractions2(String line) {
 		line=line.replaceAll(regex_departing2, regex_departingReplace2);
@@ -744,7 +744,7 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 
-	private String regex_ambulative = "([Ꭰ-Ᏼ]{3,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(ᏙᎭ|ᏙᎸᎩ|ᏙᎸᎢ?|ᏙᎴᎢ?|ᏙᎰᎢ?|ᏙᎲᎩ|ᏙᎲᎢ?|ᏙᎮᏍᏗ|ᏙᎮᎢ?|ᏓᏍᏗ|Ꮣ)\\b";
+	private String regex_ambulative = "([Ꭰ-Ᏼ]{2,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(ᏙᎭ|ᏙᎸᎩ|ᏙᎸᎢ?|ᏙᎴᎢ?|ᏙᎰᎢ?|ᏙᎲᎩ|ᏙᎲᎢ?|ᏙᎮᏍᏗ|ᏙᎮᎢ?|ᏓᏍᏗ|Ꮣ)\\b";
 	private String regex_ambulativeReplace = "$1==$2 =Ꭲ$3 ";
 	private String doAmbulativeExtractions(String line) {
 		line=line.replaceAll(regex_ambulative, regex_ambulativeReplace);
@@ -782,7 +782,7 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 
-	private String yi_prefix="\\b([ᏯᏰᏱᏲᏳᏴ])([Ꭰ-Ᏼ]{3,})";
+	private String yi_prefix="\\b([ᏯᏰᏱᏲᏳᏴ])([Ꭰ-Ᏼ]{2,})";
 	private String yi_prefixReplace="$1==$2";
 	private String doYiPrefixSplit(String line) {
 		line=line.replaceAll(yi_prefix, yi_prefixReplace);
@@ -797,7 +797,7 @@ public class AffixSplitter extends Thread {
 		return line;
 	}
 	
-	private String wi_prefix="\\b([ᏩᏪᏫᏬᏭᏮ])([Ꭰ-Ᏼ]{3,})";
+	private String wi_prefix="\\b([ᏩᏪᏫᏬᏭᏮ])([Ꭰ-Ᏼ]{2,})";
 	private String wi_prefixReplace="$1==$2";
 	private String doWiPrefixSplit(String line) {
 		line=line.replaceAll(wi_prefix, wi_prefixReplace);
@@ -819,8 +819,8 @@ public class AffixSplitter extends Thread {
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏍᎩᏂ\\b", "$1 =ᏍᎩᏂ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏉᏃ\\b", "$1 =Ꮙ =Ꮓ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏰᏃ\\b", "$1 =ᏰᏃ");
-		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏗᏜ\\b", "$1 =ᏗᏜ");
-		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏗᏢ\\b", "$1 =ᏗᏢ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏗᏜ\\b", "$1 = ᏗᏜ");
+		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})ᏗᏢ\\b", "$1 = ᏗᏢ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꮓ\\b", "$1 =Ꮓ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ꮙ\\b", "$1 =Ꮙ");
 		line = line.replaceAll("([Ꭰ-Ᏼ]{2,})Ᏹ\\b", "$1 =Ᏹ");
