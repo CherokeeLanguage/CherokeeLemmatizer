@@ -1,18 +1,12 @@
-buildscript {
-    repositories {
-        maven { url 'http://repo.spring.io/plugins-release' }
-    }
-    dependencies {
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.6'
-    }
-}
 plugins {
-  id "us.kirchmeier.capsule" version "1.0-rc1"
+  id "us.kirchmeier.capsule" version "1.0.2"
 }
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'eclipse-wtp'
+apply plugin: 'maven'
 
+group = "com.github.michael-joyner"
 version = '20160205'
 
 sourceCompatibility = 1.8
@@ -25,9 +19,7 @@ if (new File(RTJAR).exists()) {
 
 repositories {
     jcenter()
-	maven {
-		url "https://github.com/psiegman/mvn-repo/raw/master/releases"
-	}
+    maven { url "https://jitpack.io" }
 }
 
 configurations {
@@ -35,13 +27,40 @@ configurations {
 }
 
 dependencies {
-	compile project(':CherokeeDictionaryShared')
-	compile project(':CherokeeDictionaryDao')
-	compile project(':SimpleTextUi')
+	compile 'com.github.michael-joyner:CherokeeDictionaryShared:-SNAPSHOT'
+	compile 'com.github.michael-joyner:CherokeeDictionaryDao:-SNAPSHOT'
+	compile 'com.github.michael-joyner:SimpleTextUi:-SNAPSHOT'
 	
 	compile 'commons-io:commons-io:+'
 	compile 'org.apache.commons:commons-lang3:+'
 }
+
+sourceSets {
+  main {
+    compileClasspath += configurations.provided
+  }
+  test {
+    compileClasspath += configurations.provided
+    runtimeClasspath += configurations.provided
+  }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	javadoc.failOnError=false
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
 
 eclipseJdt << {
     File f = file('.settings/org.eclipse.core.resources.prefs')
@@ -84,7 +103,7 @@ eclipse {
 	project {
 		name = 'CherokeeAffixSplitter'
 		referencedProjects 'CherokeeDictionaryShared', 'CherokeeDictionaryDao', 'SimpleTextUi'
-		natures 'org.springsource.ide.eclipse.gradle.core.nature'
+		natures 'org.eclipse.buildship.core.gradleprojectnature'
 	}
 	
 	classpath {
