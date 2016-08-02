@@ -27,9 +27,9 @@ configurations {
 }
 
 dependencies {
-	compile 'com.github.michael-joyner:CherokeeDictionaryShared:-SNAPSHOT'
-	compile 'com.github.michael-joyner:CherokeeDictionaryDao:-SNAPSHOT'
-	compile 'com.github.michael-joyner:SimpleTextUi:-SNAPSHOT'
+	compile 'com.github.CherokeeLanguage:CherokeeDictionaryShared:-SNAPSHOT'
+	compile 'com.github.CherokeeLanguage:CherokeeDictionaryDao:-SNAPSHOT'
+	compile 'com.github.CherokeeLanguage:SimpleTextUi:-SNAPSHOT'
 	
 	compile 'commons-io:commons-io:+'
 	compile 'org.apache.commons:commons-lang3:+'
