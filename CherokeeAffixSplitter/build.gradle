@@ -6,7 +6,7 @@ apply plugin: 'eclipse'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'maven'
 
-group = "com.github.michael-joyner"
+group = "com.github.CherokeeLanguage"
 version = '20160205'
 
 sourceCompatibility = 1.8
