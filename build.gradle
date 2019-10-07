@@ -12,13 +12,9 @@ version = '20160205'
 sourceCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 
-def RTJAR = '/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar';
-if (new File(RTJAR).exists()) {
-	compileJava.options.bootClasspath=RTJAR
-}
-
 repositories {
     jcenter()
+	mavenCentral()
     maven { url "https://jitpack.io" }
 }
 
@@ -28,7 +24,7 @@ configurations {
 
 dependencies {
 	compile 'com.github.CherokeeLanguage:CherokeeDictionaryShared:-SNAPSHOT'
-	compile 'com.github.CherokeeLanguage:CherokeeDictionaryDao:-SNAPSHOT'
+	//compile 'com.github.CherokeeLanguage:CherokeeDictionaryDao:-SNAPSHOT'
 	compile 'com.github.CherokeeLanguage:SimpleTextUi:-SNAPSHOT'
 	
 	compile 'commons-io:commons-io:+'

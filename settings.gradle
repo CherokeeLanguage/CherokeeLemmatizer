@@ -3,8 +3,8 @@ rootProject.name = 'CherokeeAffixSplitter'
 include ":CherokeeDictionaryShared"
 project(":CherokeeDictionaryShared").projectDir=new File(settingsDir,"../../CherokeeDictionaryShared/CherokeeDictionaryShared")
 
-include ":CherokeeDictionaryDao"
-project(":CherokeeDictionaryDao").projectDir=new File(settingsDir,"../../CherokeeDictionaryDao/CherokeeDictionaryDao")
+//include ":CherokeeDictionaryDao"
+//project(":CherokeeDictionaryDao").projectDir=new File(settingsDir,"../../CherokeeDictionaryDao/CherokeeDictionaryDao")
 
 include ":SimpleTextUi"
 project(":SimpleTextUi").projectDir=new File(settingsDir,"../../SimpleTextUi/SimpleTextUi")
