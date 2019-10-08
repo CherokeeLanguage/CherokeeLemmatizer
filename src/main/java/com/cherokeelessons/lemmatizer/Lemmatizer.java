@@ -1,6 +1,5 @@
 package com.cherokeelessons.lemmatizer;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 
-public class AffixSplitter extends Thread {
+public class Lemmatizer extends Thread {
 	
 	private static final List<PatternMatchReplacement> pronouns;
 	private static final String pronoun_splitter;
@@ -78,9 +77,7 @@ public class AffixSplitter extends Thread {
 			line = doWillAlreadyExtractions(line);
 			line = doBenefactiveExtractions(line);
 			line = suffixSplits(line);
-			if (doPronouns) {
-				line = simplePronounSplits(line);
-			}
+			line = simplePronounSplits(line);
 			writer.println(line);
 		}
 		lines.close();
@@ -112,7 +109,7 @@ public class AffixSplitter extends Thread {
 	private final String[] args;
 	private boolean doPronouns=false;
 	
-	public AffixSplitter(String[] args) {
+	public Lemmatizer(String[] args) {
 		this.args=args;
 		for (String arg: args) {
 			if ("--doPronouns".equals(arg)) {
@@ -574,15 +571,7 @@ public class AffixSplitter extends Thread {
 		if (args==null) {
 			return;
 		}
-		for (String arg: args) {
-			if (arg.startsWith("--")) {
-				continue;
-			}
-			if (!new File(arg).exists() || !new File(arg).canWrite()) {
-				throw new RuntimeException("Unable to process file '"+arg+"'");
-			}
-			process();
-		}
+		process();
 	}
 
 	private String regex_without = "\\b(Ᏹ?Ꮻ?[ᎾᏁᏂᏃᏄᏅ])([Ꭰ-Ᏼ]+)([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(Ꮎ)\\b";
