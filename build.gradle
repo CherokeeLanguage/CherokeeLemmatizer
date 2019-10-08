@@ -7,7 +7,7 @@ apply plugin: 'eclipse-wtp'
 apply plugin: 'maven'
 
 group = "com.github.CherokeeLanguage"
-version = '20160205'
+version = '20191007'
 
 sourceCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
@@ -23,12 +23,13 @@ configurations {
 }
 
 dependencies {
-	compile 'com.github.CherokeeLanguage:CherokeeDictionaryShared:-SNAPSHOT'
+	//compile 'com.github.CherokeeLanguage:CherokeeDictionaryShared:-SNAPSHOT'
 	//compile 'com.github.CherokeeLanguage:CherokeeDictionaryDao:-SNAPSHOT'
-	compile 'com.github.CherokeeLanguage:SimpleTextUi:-SNAPSHOT'
+	//compile 'com.github.CherokeeLanguage:SimpleTextUi:-SNAPSHOT'
 	
 	compile 'commons-io:commons-io:+'
-	compile 'org.apache.commons:commons-lang3:+'
+	//compile 'org.apache.commons:commons-lang3:+'
+	compile 'org.apache.commons:commons-text:+'
 }
 
 sourceSets {
