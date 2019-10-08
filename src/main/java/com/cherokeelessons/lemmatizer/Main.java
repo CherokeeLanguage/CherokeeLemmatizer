@@ -1,4 +1,4 @@
-package com.cherokeelessons.affixsplitter;
+package com.cherokeelessons.lemmatizer;
 
 import java.io.IOException;
 

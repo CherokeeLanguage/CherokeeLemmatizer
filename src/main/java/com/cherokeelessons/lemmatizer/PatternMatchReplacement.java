@@ -1,4 +1,4 @@
-package com.cherokeelessons.affixsplitter;
+package com.cherokeelessons.lemmatizer;
 
 public class PatternMatchReplacement implements Comparable<PatternMatchReplacement>{
 	public String regex_match;

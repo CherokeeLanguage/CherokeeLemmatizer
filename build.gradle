@@ -23,12 +23,7 @@ configurations {
 }
 
 dependencies {
-	//compile 'com.github.CherokeeLanguage:CherokeeDictionaryShared:-SNAPSHOT'
-	//compile 'com.github.CherokeeLanguage:CherokeeDictionaryDao:-SNAPSHOT'
-	//compile 'com.github.CherokeeLanguage:SimpleTextUi:-SNAPSHOT'
-	
 	compile 'commons-io:commons-io:+'
-	//compile 'org.apache.commons:commons-lang3:+'
 	compile 'org.apache.commons:commons-text:+'
 }
 
@@ -69,8 +64,8 @@ eclipseJdt << {
 }
 
 task fatjar(type: FatCapsule) {
-  	archiveName 'CherokeeAffixSplitter.jar'
-	applicationClass 'com.cherokeelessons.affixsplitter.Main'
+  	archiveName 'CherokeeLemmatizer.jar'
+	applicationClass 'com.cherokeelessons.lemmatizer.Main'
 	capsuleManifest {
     	jvmArgs = ['-Dfile.encoding=UTF-8']
 	}
@@ -98,8 +93,8 @@ project.afterEvaluate {
 
 eclipse {
 	project {
-		name = 'CherokeeAffixSplitter'
-		referencedProjects 'CherokeeDictionaryShared', 'CherokeeDictionaryDao', 'SimpleTextUi'
+		name = 'CherokeeLemmatizer'
+		referencedProjects
 		natures 'org.eclipse.buildship.core.gradleprojectnature'
 	}
 	

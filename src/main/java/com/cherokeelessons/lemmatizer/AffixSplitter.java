@@ -1,15 +1,15 @@
-package com.cherokeelessons.affixsplitter;
+package com.cherokeelessons.lemmatizer;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,17 +63,9 @@ public class AffixSplitter extends Thread {
 		suffix_replacements=tmp_replacements.toArray(new String[0]);
 	}
 	
-	private void process(String arg) throws IOException {
-		File absoluteFile = new File(arg).getAbsoluteFile();
-		File output=null;
-		PrintStream writer;
-		if (!stdout) {
-			output = File.createTempFile(absoluteFile.getName(), ".tmp", absoluteFile.getParentFile());
-			writer = new PrintStream(new FileOutputStream(output), true, "UTF-8");
-		} else {
-			writer = System.out;
-		}
-		LineIterator lines = FileUtils.lineIterator(absoluteFile, "UTF-8");
+	private void process() throws IOException {
+		PrintStream writer = System.out;
+		LineIterator lines = IOUtils.lineIterator(System.in, StandardCharsets.UTF_8);
 		while (lines.hasNext()) {
 			String line = lines.next();
 			line = simpleAffixSplits(line);
@@ -93,11 +85,6 @@ public class AffixSplitter extends Thread {
 		}
 		lines.close();
 		writer.flush();
-		if (!stdout) {
-			writer.close();
-			FileUtils.copyFile(output, absoluteFile);
-			output.delete();
-		}
 	}
 	
 	private String regex_benefactive = "([Ꭰ-Ᏼ]{2,})([ᎡᎨᎮᎴᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭽ|ᎸᎢ?|ᎰᎢ?|ᎲᎢ?|ᎮᎢ?|ᎮᏍᏗ|Ꮅ|Ꮧ)\\b";
@@ -124,16 +111,12 @@ public class AffixSplitter extends Thread {
 
 	private final String[] args;
 	private boolean doPronouns=false;
-	private boolean stdout=false;
 	
 	public AffixSplitter(String[] args) {
 		this.args=args;
 		for (String arg: args) {
 			if ("--doPronouns".equals(arg)) {
 				doPronouns=true;
-			}
-			if ("--stdout".equals(arg)) {
-				stdout=true;
 			}
 		}
 	}
@@ -160,16 +143,16 @@ public class AffixSplitter extends Thread {
 		List<PatternMatchReplacement> matches = new ArrayList<>();
 		PatternMatchReplacement p;
 		
-		p = new PatternMatchReplacement();		
-		p.regex_match = "[ᎾᏁᏂᏃᏄᏅ]"; 
+		p = new PatternMatchReplacement();
+		p.regex_match = "[ᎾᏁᏂᏃᏄᏅ]";
 		p.match = new String[] {"Ꮎ@@", "Ꮑ@@", "Ꮒ@@", "Ꮓ@@", "Ꮔ@@", "Ꮕ@@"};
 		p.replacement  = new String[] {"Ꮒ@ Ꭰ", "Ꮒ@ Ꭱ", "Ꮒ@ ",
 				"Ꮒ@ Ꭳ", "Ꮒ@ Ꭴ", "Ꮒ@ Ꭵ"};
 		matches.add(p);
 		matches.add(prefixWithYi(p));
 		
-		p = new PatternMatchReplacement();		
-		p.regex_match = "[ᏓᏕᏙᏚᏛ]"; 
+		p = new PatternMatchReplacement();
+		p.regex_match = "[ᏓᏕᏙᏚᏛ]";
 		p.match = new String[] {"Ꮣ@@", "Ꮥ@@", "Ꮩ@@", "Ꮪ@@", "Ꮫ@@"};
 		p.replacement  = new String[] {"Ꮥ@ Ꭰ", "Ꮥ@ Ꭱ", "Ꮥ@ Ꭳ", "Ꮥ@ Ꭴ", "Ꮥ@ Ꭵ"};
 		matches.add(p);
@@ -177,8 +160,8 @@ public class AffixSplitter extends Thread {
 		matches.add(prefixWithYi(p));
 		matches.add(prefixWithYi(prefixWithNi(p)));
 		
-		p = new PatternMatchReplacement();		
-		p.regex_match = "Ꭼ[ᏯᏰᏱᏲᏳᏴ]?"; // => Ꭼxx@@ => Ꭼ@ x 
+		p = new PatternMatchReplacement();
+		p.regex_match = "Ꭼ[ᏯᏰᏱᏲᏳᏴ]?"; // => Ꭼxx@@ => Ꭼ@ x
 		p.match = new String[] {"Ꭼ@@", "ᎬᏯ@@", "ᎬᏰ@@", "ᎬᏲ@@", "ᎬᏳ@@", "ᎬᏴ@@"};
 		p.replacement  = new String[] {"Ꭼ@ ", "Ꭼ@ Ꭰ", "Ꭼ@ Ꭱ", "Ꭼ@ Ꭳ", "Ꭼ@ Ꭴ", "Ꭼ@ Ꭵ"};
 		matches.add(p);
@@ -192,14 +175,14 @@ public class AffixSplitter extends Thread {
 		addCommonPrepronounPermutations(matches, p);
 		
 		p = new PatternMatchReplacement();
-		p.regex_match = "Ꮝ[ᏆᏇᎩᏉᏊᏋ]"; 
+		p.regex_match = "Ꮝ[ᏆᏇᎩᏉᏊᏋ]";
 		p.match = new String[] {"ᏍᏆ@@", "ᏍᏇ@@", "ᏍᏉ@@", "Ꮚ@@", "ᏍᏋ@@"};
 		p.replacement  = new String[] {"ᏍᎩ@ Ꭰ", "ᏍᎩ@ Ꭱ", "ᏍᎩ@ Ꭳ", "ᏍᎩ@ Ꭴ", "ᏍᎩ@ Ꭵ"};
 		matches.add(p);
 		addCommonPrepronounPermutations(matches, p);
 		
 		p = new PatternMatchReplacement();
-		p.regex_match = "ᏍᏛ[ᏯᏰᏲᏳᏴ]?"; 
+		p.regex_match = "ᏍᏛ[ᏯᏰᏲᏳᏴ]?";
 		p.match = new String[] {"ᏍᏛ@@", "ᏍᏛᏯ@@", "ᏍᏛᏰ@@", "ᏍᏛᏲ@@", "ᏍᏛᏳ@@", "ᏍᏛᏴ@@"};
 		p.replacement  = new String[] {"ᏍᏛ@ ", "ᏍᏛ@ Ꭰ", "ᏍᏛ@ Ꭱ", "ᏍᏛ@ Ꭳ", "ᏍᏛ@ Ꭴ", "ᏍᏛ@ Ꭵ"};
 		matches.add(p);
@@ -598,7 +581,7 @@ public class AffixSplitter extends Thread {
 			if (!new File(arg).exists() || !new File(arg).canWrite()) {
 				throw new RuntimeException("Unable to process file '"+arg+"'");
 			}
-			process(arg);
+			process();
 		}
 	}
 
