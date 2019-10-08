@@ -15,12 +15,29 @@ build:
 run: 
 cat text.in | java -jar build/libs/CherokeeAffixSplitter.jar > text.out
 
-flags:
+[TODO] 
 
---moses-lemma #Output in pipe format for use in the Moses MT system. [surface form|lemma]
---moses-prefixes #Output in pipe format for use in the Moses MT system. [surface form|prefixes]
---moses-suffixes #Output in pipe format for use in the Moses MT system. [surface form|suffixes]
---moses-full #Output in pipe format for use in the Moses MT system. [surface form|lemma|prefixes|suffixes] 
+Flags:
+
+```
+--moses-lemma
+```
+Output in pipe format for use in the Moses MT system. [surface form|lemma]
+```
+--moses-prefixes
+```
+Output in pipe format for use in the Moses MT system. [surface form|prefixes]
+
+```
+--moses-suffixes
+```
+Output in pipe format for use in the Moses MT system. [surface form|suffixes]
+
+```
+--moses-full
+```
+Output in pipe format for use in the Moses MT system. [surface form|lemma|prefixes|suffixes]
+
  
-only one flag may be specified.
+Only one flag may be specified.
 
