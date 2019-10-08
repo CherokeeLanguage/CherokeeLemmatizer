@@ -107,15 +107,9 @@ public class Lemmatizer extends Thread {
 	}
 
 	private final String[] args;
-	private boolean doPronouns=false;
 	
 	public Lemmatizer(String[] args) {
 		this.args=args;
-		for (String arg: args) {
-			if ("--doPronouns".equals(arg)) {
-				doPronouns=true;
-			}
-		}
 	}
 
 	private static List<PatternMatchReplacement> getSuffixMatches() {
