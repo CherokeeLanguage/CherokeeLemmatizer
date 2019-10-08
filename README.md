@@ -13,7 +13,7 @@ build:
 ```
 
 run: 
-cat text.in | java -jar build/libs/CherokeeAffixSplitter.jar > text.out
+cat text.in | java -jar build/libs/CherokeeLemmatizer.jar > text.out
 
 [TODO] 
 
