@@ -10,6 +10,12 @@ import org.testng.annotations.Test;
 import com.cherokeelessons.lemmatizer.Lemmatizer;
 
 public class BasicTests {
+	
+	@Test
+	public void pronounTests() {
+		Lemmatizer l = new Lemmatizer();
+		assert l.getFactored("ᎠᏂᏧᏣ").equals("ᎠᏂᏧᏣ|ᏧᏣ|ᎠᏂ-|");
+	}
 
 	@Test
 	public void noRegexReplaceLeaks() throws IOException {
