@@ -41,7 +41,7 @@ public class Lemmatizer extends Thread {
 			tmp_matches.addAll(Arrays.asList(p.match));
 			tmp_replacements.addAll(Arrays.asList(p.replacement));
 		}
-		pronoun_splitter = "\\b(" + tmp.toString() + ")([Ꭰ-Ᏼ]{3,})";
+		pronoun_splitter = "\\b(" + tmp.toString() + ")([Ꭰ-Ᏼ]{2,})";
 		pronoun_matches = tmp_matches.toArray(new String[0]);
 		pronoun_replacements = tmp_replacements.toArray(new String[0]);
 
@@ -84,12 +84,12 @@ public class Lemmatizer extends Thread {
 				doAlreadyHaveExtractions(ff);
 				doAmbulativeExtractions(ff);
 				doApproachingExtractions(ff);
-//				line = doDepartingExtractions(line);
-//				line = doCompletelyExtractions(line);
-//				line = doWillAlreadyExtractions(line);
-//				line = doBenefactiveExtractions(line);
-//				line = suffixSplits(line);
-//				line = simplePronounSplits(line);
+				doDepartingExtractions(ff);
+				doCompletelyExtractions(ff);
+				doWillAlreadyExtractions(ff);
+				doBenefactiveExtractions(ff);
+				suffixSplits(ff);
+				simplePronounSplits(ff);
 				line = (line.isEmpty() ? line : line + " ") + ff.getSurfaceForm() + "|" + ff.getLemma() + "|"
 						+ ff.getPrefixes() + "|" + ff.getSuffixes();
 			}
@@ -113,7 +113,8 @@ public class Lemmatizer extends Thread {
 	private String regex_benefactive = "([Ꭰ-Ᏼ]{2,})([ᎡᎨᎮᎴᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭽ|ᎸᎢ?|ᎰᎢ?|ᎲᎢ?|ᎮᎢ?|ᎮᏍᏗ|Ꮅ|Ꮧ)\\b";
 	private String regex_benefactiveReplace = "$1@@$2 @Ꭱ$3 ";
 
-	private String doBenefactiveExtractions(String line) {
+	private void doBenefactiveExtractions(FactoredForm ff) {
+		String line = ff.getLemma();
 		line = line.replaceAll(regex_benefactive, regex_benefactiveReplace);
 		if (line.contains("@@")) {
 			line = line.replace("@@Ꭱ ", "ᎥᎢ ");
@@ -129,8 +130,13 @@ public class Lemmatizer extends Thread {
 			line = line.replace("@@Ꮴ ", "ᏨᎢ ");
 			line = line.replace("@@Ꮺ ", "ᏮᎢ ");
 			line = line.replace("@@Ᏸ ", "ᏴᎢ ");
+			
+			String suffix = line.replaceAll(".* @(.*)", "$1");
+			line = line.replaceAll("(.*) @.*", "$1");
+			
+			ff.setLemma(line);
+			ff.addSuffix(suffix);
 		}
-		return line;
 	}
 
 	private final String[] args;
@@ -659,7 +665,8 @@ public class Lemmatizer extends Thread {
 	private String regex_willAlready = "\\b(Ᏹ?[ᎾᏁᏂᏃᏄᏅ]{2,})([Ꭰ-Ᏼ]+)([ᎡᎨᎮᎴᎺᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(ᏍᏗ)\\b";
 	private String regex_willAlreadyReplace = "$1@@ $2@@$3 ᎡᏍᏗ";
 
-	private String doWillAlreadyExtractions(String line) {
+	private void doWillAlreadyExtractions(FactoredForm ff) {
+		String line = ff.getLemma();
 		line = line.replaceAll(regex_willAlready, regex_willAlreadyReplace);
 		if (line.contains("@@")) {
 			line = line.replace("@@Ꭱ ", "ᎥᎢ ");
@@ -675,20 +682,31 @@ public class Lemmatizer extends Thread {
 			line = line.replace("@@Ꮴ ", "ᏨᎢ ");
 			line = line.replace("@@Ꮺ ", "ᏮᎢ ");
 			line = line.replace("@@Ᏸ ", "ᏴᎢ ");
+			if (line.endsWith(" ᎡᏍᏗ")) {
+				line=line.replace(" ᎡᏍᏗ", "");
+				ff.setLemma(line);
+				ff.addSuffix("ᎡᏍᏗ");
+			}
+			
 			line = line.replace("Ꮎ@@ ", "Ꮒ@ Ꭰ");
 			line = line.replace("Ꮑ@@ ", "Ꮒ@ Ꭱ");
 			line = line.replace("Ꮒ@@ ", "Ꮒ@ ");
 			line = line.replace("Ꮓ@@ ", "Ꮒ@ Ꭳ");
 			line = line.replace("Ꮔ@@ ", "Ꮒ@ Ꭴ");
 			line = line.replace("Ꮕ@@ ", "Ꮒ@ Ꭵ");
+			if (line.contains("Ꮒ@ ")) {
+				line = line.replace("Ꮒ@ ", "").trim();
+				ff.setLemma(line);
+				ff.addPrefix("Ꮒ");
+			}
 		}
-		return line;
 	}
 
 	private String regex_completely = "([Ꭰ-Ᏼ]{2,})([ᎣᎪᎰᎶᎼᏃᏉᏐᏙᏠᏦᏬᏲ])(ᎲᏍᎪᎢ?|ᎲᏍᎨᎢ?|ᎲᏍᎬᎢ?|ᎲᏍᎬᎩ|ᏅᎢ?|ᏁᎢ?|ᏅᎩ|Ꮎ|ᎲᏍᏗ|ᎲᏍᎦ)\\b";
 	private String regex_completelyReplace = "$1@@$2 @Ꭳ$3 ";
 
-	private String doCompletelyExtractions(String line) {
+	private void doCompletelyExtractions(FactoredForm ff) {
+		String line = ff.getLemma();
 		line = line.replaceAll(regex_completely, regex_completelyReplace);
 		if (line.contains("@@")) {
 			line = line.replace("@@Ꭳ ", "ᎥᎢ ");
@@ -703,8 +721,11 @@ public class Lemmatizer extends Thread {
 			line = line.replace("@@Ꮶ ", "ᏨᎢ ");
 			line = line.replace("@@Ꮼ ", "ᏮᎢ ");
 			line = line.replace("@@Ᏺ ", "ᏴᎢ ");
+			String suffix = line.replaceAll(".* @(.*)", "$1").trim();
+			line=line.replaceAll("(.*) @.*", "$1").trim();
+			ff.setLemma(line);
+			ff.addSuffix(suffix);
 		}
-		return line;
 	}
 
 	private String regex_approaching = "([Ꭰ-Ᏼ]{2,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(Ꭶ|ᎸᎢ?|ᎸᎩ|ᎴᎢ?|ᎯᎰᎢ?|ᎯᎲᎢ?|ᎯᎲᎩ|ᎯᎮᎢ?|ᎯᎮᏍᏗ|ᏍᏗ)\\b";
@@ -756,35 +777,35 @@ public class Lemmatizer extends Thread {
 
 	private String regex_departing = "([Ꭰ-Ᏼ]{2,})([ᎥᎬᎲᎸᏅᏋᏒᏛᏢᏨᏮᏴ])(ᏒᎢ?|ᏍᏗ)\\b";
 	private String regex_departingReplace = "$1$2Ꭲ @Ꭵ$3";
-
-	private String doDepartingExtractions(String line) {
-		line = line.replaceAll(regex_departing, regex_departingReplace);
-		line = doDepartingExtractions2(line);
-		return line;
-	}
-
+	
 	private String regex_departing2 = "([Ꭰ-Ᏼ]{2,})([ᎡᎨᎮᎴᎺᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭶ|ᎪᎢ?|ᎨᎢ?|ᎬᎢ?|Ꮎ)\\b";
 	private String regex_departingReplace2 = "$1@@$2 @$3";
 
-	private String doDepartingExtractions2(String line) {
-		line = line.replaceAll(regex_departing2, regex_departingReplace2);
-		if (line.contains("@@")) {
-			line = line.replace("@@Ꭱ ", "ᎥᎢ ");
-			line = line.replace("@@Ꭸ ", "ᎬᎢ ");
-			line = line.replace("@@Ꭾ ", "ᎲᎢ ");
-			line = line.replace("@@Ꮄ ", "ᎸᎢ ");
-			line = line.replace("@@Ꮑ ", "ᏅᎢ ");
-			line = line.replace("@@Ꮗ ", "ᏋᎢ ");
-			line = line.replace("@@Ꮞ ", "ᏒᎢ ");
-			line = line.replace("@@Ꮥ ", "ᏛᎢ ");
-			line = line.replace("@@Ꮦ ", "ᏛᎢ ");
-			line = line.replace("@@Ꮮ ", "ᏢᎢ ");
-			line = line.replace("@@Ꮴ ", "ᏨᎢ ");
-			line = line.replace("@@Ꮺ ", "ᏮᎢ ");
-			line = line.replace("@@Ᏸ ", "ᏴᎢ ");
+	private void doDepartingExtractions(FactoredForm ff) {
+		String word = ff.getLemma();
+		word = word.replaceAll(regex_departing, regex_departingReplace);
+		word = word.replaceAll(regex_departing2, regex_departingReplace2);
+		if (word.contains("@@")) {
+			word = word.replace("@@Ꭱ ", "ᎥᎢ ");
+			word = word.replace("@@Ꭸ ", "ᎬᎢ ");
+			word = word.replace("@@Ꭾ ", "ᎲᎢ ");
+			word = word.replace("@@Ꮄ ", "ᎸᎢ ");
+			word = word.replace("@@Ꮑ ", "ᏅᎢ ");
+			word = word.replace("@@Ꮗ ", "ᏋᎢ ");
+			word = word.replace("@@Ꮞ ", "ᏒᎢ ");
+			word = word.replace("@@Ꮥ ", "ᏛᎢ ");
+			word = word.replace("@@Ꮦ ", "ᏛᎢ ");
+			word = word.replace("@@Ꮮ ", "ᏢᎢ ");
+			word = word.replace("@@Ꮴ ", "ᏨᎢ ");
+			word = word.replace("@@Ꮺ ", "ᏮᎢ ");
+			word = word.replace("@@Ᏸ ", "ᏴᎢ ");
+			String suffix = word.replaceAll(".* @(.*)", "$1").trim();
+			word=word.replaceAll("(.*) @.*", "$1").trim();
+			ff.setLemma(word);
+			ff.addSuffix(suffix);
 		}
-		return line;
 	}
+
 
 	private String regex_ambulative = "([Ꭰ-Ᏼ]{2,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(ᏙᎭ|ᏙᎸᎩ|ᏙᎸᎢ?|ᏙᎴᎢ?|ᏙᎰᎢ?|ᏙᎲᎩ|ᏙᎲᎢ?|ᏙᎮᏍᏗ|ᏙᎮᎢ?|ᏓᏍᏗ|Ꮣ)\\b";
 	private String regex_ambulativeReplace = "$1@@$2 @Ꭲ$3 ";
@@ -831,20 +852,36 @@ public class Lemmatizer extends Thread {
 		}
 	}
 
-	private String simplePronounSplits(String line) {
+	private void simplePronounSplits(FactoredForm ff) {
+		String line = ff.getLemma();
 		line = line.replaceAll(pronoun_splitter, "$1@@$2");
 		if (line.contains("@@")) {
 			line = StringUtils.replaceEach(line, pronoun_matches, pronoun_replacements);
+			while (line.contains("@ ")) {
+				String prefix=line.replaceFirst("(.*?)@ .*", "$1");
+				line=line.replaceFirst(".*?@ (.*)", "$1");
+				while(prefix.contains("@")) {
+					String preprefix = prefix.replaceFirst("(.*?)@.*", "$1");
+					prefix = prefix.replaceFirst(".*?@(.*)", "$1");
+					ff.addPrefix(preprefix);
+				}
+				ff.addPrefix(prefix);
+				ff.setLemma(line);
+			}
 		}
-		return line;
 	}
 
-	private String suffixSplits(String line) {
+	private void suffixSplits(FactoredForm ff) {
+		String line = ff.getLemma();
 		line = line.replaceAll(suffix_splitter, "$1@@$2");
 		if (line.contains("@@")) {
 			line = StringUtils.replaceEach(line, suffix_matches, suffix_replacements);
+			if (line.contains(" @ᎥᎾ")) {
+				line = line.replace(" @ᎥᎾ", "");
+				ff.setLemma(line);
+				ff.addSuffix("ᎥᎾ");
+			}
 		}
-		return line;
 	}
 
 	private String yi_prefix = "\\b([ᏯᏰᏱᏲᏳᏴ])([Ꭰ-Ᏼ]{2,})";

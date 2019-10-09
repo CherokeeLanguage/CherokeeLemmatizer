@@ -9,11 +9,11 @@ public class FactoredForm {
 	private String suffixes;
 
 	public void addPrefix(String prefix) {
-		prefixes = getPrefixes() + prefix + "-";
+		prefixes = getPrefixes() + prefix.trim() + "-";
 	}
 
 	public void addSuffix(String suffix) {
-		suffixes = "-" + suffix + getSuffixes();
+		suffixes = "-" + suffix.trim() + getSuffixes();
 	}
 
 	public String getSurfaceForm() {
@@ -29,7 +29,7 @@ public class FactoredForm {
 	}
 
 	public void setPos(String pos) {
-		this.pos = pos;
+		this.pos = pos.trim();
 	}
 
 	public String getLemma() {
@@ -37,7 +37,7 @@ public class FactoredForm {
 	}
 
 	public void setLemma(String lemma) {
-		this.lemma = lemma;
+		this.lemma = lemma.trim();
 	}
 
 	public String getStem() {
@@ -45,7 +45,7 @@ public class FactoredForm {
 	}
 
 	public void setStem(String stem) {
-		this.stem = stem;
+		this.stem = stem.trim();
 	}
 
 	public String getPrefixes() {
@@ -53,7 +53,7 @@ public class FactoredForm {
 	}
 
 	public void setPrefixes(String prefixes) {
-		this.prefixes = prefixes;
+		this.prefixes = prefixes.trim();
 	}
 
 	public String getSuffixes() {
@@ -61,6 +61,6 @@ public class FactoredForm {
 	}
 
 	public void setSuffixes(String suffixes) {
-		this.suffixes = suffixes;
+		this.suffixes = suffixes.trim();
 	}
 }
