@@ -25,6 +25,9 @@ configurations {
 dependencies {
 	compile 'commons-io:commons-io:+'
 	compile 'org.apache.commons:commons-text:+'
+	
+	// https://mvnrepository.com/artifact/org.testng/testng
+	testCompile group: 'org.testng', name: 'testng', version: '7.0.0'	
 }
 
 sourceSets {
@@ -123,4 +126,11 @@ eclipse {
 task "create-dirs" << {
 	sourceSets*.java.srcDirs*.each { it.mkdirs() }
 	sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+}
+
+test {
+  // enable TestNG support (default is JUnit)
+  useTestNG()
+  testLogging.showStandardStreams = true
+  failFast = true
 }
