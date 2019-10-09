@@ -845,6 +845,10 @@ public class Lemmatizer extends Thread {
 	private void simplePronounSplits(FactoredForm ff) {
 		String line = ff.getLemma();
 		line = line.replaceAll(pronoun_splitter, "$1@@$2");
+		if (line.contains("@@") && !line.contains("@ ")) {
+			//ignore bad pronoun split
+			line=ff.getLemma();
+		}
 		if (line.contains("@@")) {
 			line = StringUtils.replaceEach(line, pronoun_matches, pronoun_replacements);
 			while (line.contains("@ ")) {

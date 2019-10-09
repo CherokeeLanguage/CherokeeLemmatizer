@@ -41,18 +41,36 @@ public class FactoredForm {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("FactoredForm [surfaceForm=");
-		builder.append(surfaceForm);
-		builder.append(", pos=");
-		builder.append(pos);
-		builder.append(", lemma=");
-		builder.append(lemma);
-		builder.append(", stem=");
-		builder.append(stem);
-		builder.append(", prefixes=");
-		builder.append(prefixes);
-		builder.append(", suffixes=");
-		builder.append(suffixes);
+		builder.append("FactoredForm [");
+		if (surfaceForm != null) {
+			builder.append("surfaceForm=");
+			builder.append(surfaceForm);
+			builder.append(", ");
+		}
+		if (pos != null) {
+			builder.append("pos=");
+			builder.append(pos);
+			builder.append(", ");
+		}
+		if (lemma != null) {
+			builder.append("lemma=");
+			builder.append(lemma);
+			builder.append(", ");
+		}
+		if (stem != null) {
+			builder.append("stem=");
+			builder.append(stem);
+			builder.append(", ");
+		}
+		if (prefixes != null) {
+			builder.append("prefixes=");
+			builder.append(prefixes);
+			builder.append(", ");
+		}
+		if (suffixes != null) {
+			builder.append("suffixes=");
+			builder.append(suffixes);
+		}
 		builder.append("]");
 		return builder.toString();
 	}
