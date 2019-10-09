@@ -15,29 +15,7 @@ build:
 run: 
 cat text.in | java -jar build/libs/CherokeeLemmatizer.jar > text.out
 
-[TODO] 
+Where text.in is assumed to be pre-tokenized text.
+And text.out is output in "factored" format for use by translation systems like Moses-SMT.
 
-Flags:
-
-```
---moses-lemma
-```
-Output in pipe format for use in the Moses MT system. [surface form|lemma]
-```
---moses-prefixes
-```
-Output in pipe format for use in the Moses MT system. [surface form|prefixes]
-
-```
---moses-suffixes
-```
-Output in pipe format for use in the Moses MT system. [surface form|suffixes]
-
-```
---moses-full
-```
-Output in pipe format for use in the Moses MT system. [surface form|lemma|prefixes|suffixes]
-
- 
-Only one flag may be specified.
-
+See [examples/] for some example input/output files.
