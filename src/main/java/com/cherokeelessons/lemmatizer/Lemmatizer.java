@@ -655,39 +655,39 @@ public class Lemmatizer extends Thread {
 	private String regex_willAlreadyReplace = "$1@@ $2@@$3 ᎡᏍᏗ";
 
 	private void doWillAlreadyExtractions(FactoredForm ff) {
-		String line = ff.getLemma();
-		line = line.replaceAll(regex_willAlready, regex_willAlreadyReplace);
-		if (line.contains("@@")) {
-			line = line.replace("@@Ꭱ ", "ᎥᎢ ");
-			line = line.replace("@@Ꭸ ", "ᎬᎢ ");
-			line = line.replace("@@Ꭾ ", "ᎲᎢ ");
-			line = line.replace("@@Ꮄ ", "ᎸᎢ ");
-			line = line.replace("@@Ꮑ ", "ᏅᎢ ");
-			line = line.replace("@@Ꮗ ", "ᏋᎢ ");
-			line = line.replace("@@Ꮞ ", "ᏒᎢ ");
-			line = line.replace("@@Ꮥ ", "ᏛᎢ ");
-			line = line.replace("@@Ꮦ ", "ᏛᎢ ");
-			line = line.replace("@@Ꮮ ", "ᏢᎢ ");
-			line = line.replace("@@Ꮴ ", "ᏨᎢ ");
-			line = line.replace("@@Ꮺ ", "ᏮᎢ ");
-			line = line.replace("@@Ᏸ ", "ᏴᎢ ");
-			if (line.endsWith(" ᎡᏍᏗ")) {
-				line=line.replace(" ᎡᏍᏗ", "");
-				ff.setLemma(line);
+		String word = ff.getLemma();
+		word = word.replaceAll(regex_willAlready, regex_willAlreadyReplace);
+		if (word.contains("@@")) {
+			word = word.replace("@@Ꭱ ", "ᎥᎢ ");
+			word = word.replace("@@Ꭸ ", "ᎬᎢ ");
+			word = word.replace("@@Ꭾ ", "ᎲᎢ ");
+			word = word.replace("@@Ꮄ ", "ᎸᎢ ");
+			word = word.replace("@@Ꮑ ", "ᏅᎢ ");
+			word = word.replace("@@Ꮗ ", "ᏋᎢ ");
+			word = word.replace("@@Ꮞ ", "ᏒᎢ ");
+			word = word.replace("@@Ꮥ ", "ᏛᎢ ");
+			word = word.replace("@@Ꮦ ", "ᏛᎢ ");
+			word = word.replace("@@Ꮮ ", "ᏢᎢ ");
+			word = word.replace("@@Ꮴ ", "ᏨᎢ ");
+			word = word.replace("@@Ꮺ ", "ᏮᎢ ");
+			word = word.replace("@@Ᏸ ", "ᏴᎢ ");
+			if (word.endsWith(" ᎡᏍᏗ")) {
+				word=word.replace(" ᎡᏍᏗ", "");
 				ff.addSuffix("ᎡᏍᏗ");
 			}
 			
-			line = line.replace("Ꮎ@@ ", "Ꮒ@ Ꭰ");
-			line = line.replace("Ꮑ@@ ", "Ꮒ@ Ꭱ");
-			line = line.replace("Ꮒ@@ ", "Ꮒ@ ");
-			line = line.replace("Ꮓ@@ ", "Ꮒ@ Ꭳ");
-			line = line.replace("Ꮔ@@ ", "Ꮒ@ Ꭴ");
-			line = line.replace("Ꮕ@@ ", "Ꮒ@ Ꭵ");
-			if (line.contains("Ꮒ@ ")) {
-				line = line.replace("Ꮒ@ ", "").trim();
-				ff.setLemma(line);
+			word = word.replace("Ꮎ@@ ", "Ꮒ@ Ꭰ");
+			word = word.replace("Ꮑ@@ ", "Ꮒ@ Ꭱ");
+			word = word.replace("Ꮒ@@ ", "Ꮒ@ ");
+			word = word.replace("Ꮓ@@ ", "Ꮒ@ Ꭳ");
+			word = word.replace("Ꮔ@@ ", "Ꮒ@ Ꭴ");
+			word = word.replace("Ꮕ@@ ", "Ꮒ@ Ꭵ");
+			if (word.contains("Ꮒ@ ")) {
+				word = word.replace("Ꮒ@ ", "").trim();
 				ff.addPrefix("Ꮒ");
 			}
+			
+			ff.setLemma(word);
 		}
 	}
 
