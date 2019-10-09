@@ -78,12 +78,23 @@ public class Lemmatizer extends Thread {
 			line = doBenefactiveExtractions(line);
 			line = suffixSplits(line);
 			line = simplePronounSplits(line);
-			writer.println(line);
+			writer.println(factoredFomat(line));
 		}
 		lines.close();
 		writer.flush();
 	}
 	
+	private String factoredFomat(String line) {
+		String oline=line;
+		
+		line = line.replaceAll("([Ꭰ-Ᏼ]+@ )+([Ꭰ-Ᏼ]+)", "$2|$1");
+		line = line.replaceAll("@ ", "-");
+		
+		line = line.replaceAll("( @[Ꭰ-Ᏼ]+)+", "|$1");
+		line = line.replaceAll(" @", "-");
+		return oline+"\n"+line;
+	}
+
 	private String regex_benefactive = "([Ꭰ-Ᏼ]{2,})([ᎡᎨᎮᎴᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭽ|ᎸᎢ?|ᎰᎢ?|ᎲᎢ?|ᎮᎢ?|ᎮᏍᏗ|Ꮅ|Ꮧ)\\b";
 	private String regex_benefactiveReplace = "$1@@$2 @Ꭱ$3 ";
 	private String doBenefactiveExtractions(String line) {
