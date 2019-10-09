@@ -1,0 +1,4 @@
+
+# TODO
+
+Add a reference list of words that should not be "lemmatized" and use them to de-lemmatize entries to best match dictionary forms. 
