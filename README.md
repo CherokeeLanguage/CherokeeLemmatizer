@@ -45,4 +45,4 @@ Note:
 
 
 
-See [examples/] for some example input/output files.
+See [examples](./examples/) for some example input/output files.
