@@ -10,10 +10,12 @@ public class FactoredForm {
 
 	public void addPrefix(String prefix) {
 		prefixes = getPrefixes() + prefix.trim() + "-";
+		assert !prefix.contains("@"):toString();
 	}
 
 	public void addSuffix(String suffix) {
 		suffixes = "-" + suffix.trim() + getSuffixes();
+		assert !suffix.contains("@"):toString();
 	}
 
 	public String getSurfaceForm() {
@@ -36,8 +38,28 @@ public class FactoredForm {
 		return lemma == null ? "" : lemma;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FactoredForm [surfaceForm=");
+		builder.append(surfaceForm);
+		builder.append(", pos=");
+		builder.append(pos);
+		builder.append(", lemma=");
+		builder.append(lemma);
+		builder.append(", stem=");
+		builder.append(stem);
+		builder.append(", prefixes=");
+		builder.append(prefixes);
+		builder.append(", suffixes=");
+		builder.append(suffixes);
+		builder.append("]");
+		return builder.toString();
+	}
+
 	public void setLemma(String lemma) {
 		this.lemma = lemma.trim();
+		assert !lemma.contains("@"):toString();
 	}
 
 	public String getStem() {

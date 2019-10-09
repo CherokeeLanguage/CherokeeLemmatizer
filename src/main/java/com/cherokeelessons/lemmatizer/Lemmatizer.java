@@ -67,36 +67,40 @@ public class Lemmatizer extends Thread {
 		LineIterator lines = IOUtils.lineIterator(System.in, StandardCharsets.UTF_8);
 		while (lines.hasNext()) {
 			String line = lines.next();
-
-			String[] words = line.split("\\s");
-			if (words == null || words.length == 0) {
-				continue;
-			}
-
-			line = "";
-			for (String word : words) {
-				FactoredForm ff = new FactoredForm();
-				ff.setSurfaceForm(word);
-				ff.setLemma(word);
-
-				simpleAffixSplits(ff);
-				doWithoutExtractions(ff);
-				doAlreadyHaveExtractions(ff);
-				doAmbulativeExtractions(ff);
-				doApproachingExtractions(ff);
-				doDepartingExtractions(ff);
-				doCompletelyExtractions(ff);
-				doWillAlreadyExtractions(ff);
-				doBenefactiveExtractions(ff);
-				suffixSplits(ff);
-				simplePronounSplits(ff);
-				line = (line.isEmpty() ? line : line + " ") + ff.getSurfaceForm() + "|" + ff.getLemma() + "|"
-						+ ff.getPrefixes() + "|" + ff.getSuffixes();
-			}
+			line = getFactored(line);
 			writer.println(line);
 		}
 		lines.close();
 		writer.flush();
+	}
+
+
+	public String getFactored(String line) {
+		String[] words = line.split("\\s");
+		if (words == null) {
+			words = new String[0];
+		}
+
+		line = "";
+		for (String word : words) {
+			FactoredForm ff = new FactoredForm();
+			ff.setSurfaceForm(word);
+			ff.setLemma(word);
+			simpleAffixSplits(ff);
+			doWithoutExtractions(ff);
+			doAlreadyHaveExtractions(ff);
+			doAmbulativeExtractions(ff);
+			doApproachingExtractions(ff);
+			doDepartingExtractions(ff);
+			doCompletelyExtractions(ff);
+			doWillAlreadyExtractions(ff);
+			doBenefactiveExtractions(ff);
+			suffixSplits(ff);
+			simplePronounSplits(ff);
+			line = (line.isEmpty() ? line : line + " ") + ff.getSurfaceForm() + "|" + ff.getLemma() + "|"
+					+ ff.getPrefixes() + "|" + ff.getSuffixes();
+		}
+		return line;
 	}
 
 	private String regex_benefactive = "([Ꭰ-Ᏼ]{2,})([ᎡᎨᎮᎴᏁᏇᏎᏕᏖᏞᏤᏪᏰ])(Ꭽ|ᎸᎢ?|ᎰᎢ?|ᎲᎢ?|ᎮᎢ?|ᎮᏍᏗ|Ꮅ|Ꮧ)\\b";
@@ -598,7 +602,9 @@ public class Lemmatizer extends Thread {
 			word = word.replace("Ꮓ@@ ", "Ꭳ");
 			word = word.replace("Ꮔ@@ ", "Ꭴ");
 			word = word.replace("Ꮕ@@ ", "Ꭵ");
+			word = word.replace(" @ᎥᎾ", "");
 			ff.addPrefix("Ꮒ");
+			ff.addSuffix("ᎥᎾ");
 			ff.setLemma(word);
 		}
 	}
@@ -627,7 +633,6 @@ public class Lemmatizer extends Thread {
 			if (word.contains("@ᎣᎢ")) {
 				word = word.replace(" @ᎣᎢ ", "");
 				ff.addSuffix("ᎣᎢ");
-				ff.setLemma(word);
 			}
 
 			word = word.replace("Ꮎ@@ ", "Ꮒ@ Ꭰ");
@@ -640,9 +645,9 @@ public class Lemmatizer extends Thread {
 			if (word.contains("Ꮒ@ ")) {
 				word = word.replace("Ꮒ@ ", "");
 				ff.addPrefix("Ꮒ");
-				ff.setLemma(word);
 			}
-
+			
+			ff.setLemma(word);
 		}
 	}
 
@@ -697,6 +702,7 @@ public class Lemmatizer extends Thread {
 			line = line.replace("@@Ꭺ ", "ᎬᎢ ");
 			line = line.replace("@@Ꮀ ", "ᎲᎢ ");
 			line = line.replace("@@Ꮆ ", "ᎸᎢ ");
+			line = line.replace("@@Ꮌ ", "ᎸᎢ ");
 			line = line.replace("@@Ꮓ ", "ᏅᎢ ");
 			line = line.replace("@@Ꮙ ", "ᏋᎢ ");
 			line = line.replace("@@Ꮠ ", "ᏒᎢ ");
@@ -707,9 +713,9 @@ public class Lemmatizer extends Thread {
 			line = line.replace("@@Ᏺ ", "ᏴᎢ ");
 			String suffix = line.replaceAll(".* @(.*)", "$1").trim();
 			line=line.replaceAll("(.*) @.*", "$1").trim();
-			ff.setLemma(line);
 			ff.addSuffix(suffix);
 		}
+		ff.setLemma(line);
 	}
 
 	private String regex_approaching = "([Ꭰ-Ᏼ]{2,})([ᎢᎩᎯᎵᎻᏂᏈᏏᏗᏘᏟᏥᏫᏱ])(Ꭶ|ᎸᎢ?|ᎸᎩ|ᎴᎢ?|ᎯᎰᎢ?|ᎯᎲᎢ?|ᎯᎲᎩ|ᎯᎮᎢ?|ᎯᎮᏍᏗ|ᏍᏗ)\\b";
@@ -850,8 +856,8 @@ public class Lemmatizer extends Thread {
 					ff.addPrefix(preprefix);
 				}
 				ff.addPrefix(prefix);
-				ff.setLemma(line);
 			}
+			ff.setLemma(line);
 		}
 	}
 
