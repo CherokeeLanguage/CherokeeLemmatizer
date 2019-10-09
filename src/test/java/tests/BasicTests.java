@@ -18,6 +18,7 @@ public class BasicTests {
 		while (lineIterator.hasNext()) {
 			String line = lineIterator.next();
 			line = line.replace("@", " ");
+			line = line.replaceAll("([Ꭰ-Ᏼ]+)", " $1 ");//simple tokenization
 			assert !l.getFactored(line).contains("@"):reportBadFactorings();
 		}
 		lineIterator.close();
@@ -30,6 +31,7 @@ public class BasicTests {
 		while (lineIterator.hasNext()) {
 			String line = lineIterator.next();
 			line = line.replace("@", " ");
+			line = line.replaceAll("([Ꭰ-Ᏼ]+)", " $1 ");//simple tokenization
 			line = l.getFactored(line);
 			String[] parts = line.split("\\s");
 			for (String part: parts) {
